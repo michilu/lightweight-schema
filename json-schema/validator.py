@@ -1,32 +1,38 @@
+#!/usr/bin/env python
+#:coding=utf-8:
 #:tabSize=2:indentSize=2:noTabs=true:
 #:folding=explicit:collapseFolds=1:
+
 '''
 Provides JSON schema validation based on the specifications of the the 
 JSON schema proposal (http://www.json.com/json-schema-proposal/).
 '''
+
 #TODO: Line numbers for error messages
 #TODO: Field names for error messages
 #TODO: Support references
 #TODO: Support inline schema
-
-#TODO: Add support for object types in the TypeValidator
-# For objects to work we'll need some sort of recursive validation that includes
-# more than type validation (required, maximum, etc.) so we'll need to rework
-# the Validator classes.
+#TODO: Add checks to make sure the schema itself is valid
 
 import types, sys, simplejson
 
-class RequiredValidator(object):
-  def __init__(self, required=True):
-    self.required = required
+class JSONValidator(object):
   
-  def validate(self, x):
-    if x is None and self.required:
-      raise ValueError("Required field is missing")
-    return x;
-
-class TypeValidator(FieldValidator):
+  # TODO: Create a map of validation functions like Muraoka Yusuke (村岡友介)
+  #       created in the original implementation. However, the functions need
+  #       to be pulled from the JSONValidator class namespace rather than
+  #       the local namespace.
   
+  # ALTERNATIVE: Go back to the class based approach and create validators
+  #              but make the type validator a special validator that
+  #              recursively processes the object definitions.
+  
+  # ALTERNATIVE: Same as the class based approach but type validator only 
+  #              validates the object is an object if it's specified as an
+  #              object type. Another driver class would perform the recursive
+  #              processing.
+  
+  # TODO: Test support for unicode string types
   self.typesmap = {
     "string": types.StringType,
     "integer": types.IntType,
@@ -57,17 +63,112 @@ class TypeValidator(FieldValidator):
       if fieldtype not in self.typesmap.keys():
         raise ValueError("Unsupported field type: %s" % fieldtype)
   
-  def validate(self, x, fieldtype=None):
-    if not fieldtype:
-      fieldtype = self.fieldtype
-    x = super.validate(x):
-    if (x and fieldtype):
-      if isinstance(fieldtype, types.ListType) and isinstance(x, types.ListType):
+  def validate_optional(self, x, fieldname, fieldtype=None, optional=False):
+    '''Validates that the given field is present if optional is false'''
+    # Make sure the field is present
+    if fieldname in x.keys() and not optional:
+      raise ValueError("Required field %s is missing" % fieldname)
+    return x
+  
+  def validate_nullable(self, x, fieldname, fieldtype=None, nullable=False):
+    '''Validates that the given field is not null if the field is present and
+       nullable is false'''
+    if (fieldname in x.keys() and x.get(fieldname) is None and not nullable):
+      raise ValueError("%s is not nullable.")
+    return x
+  
+  def validate_unique(self, x, fieldname, fieldtype=None, unique=False):
+    '''Validates that the given field is unique in the instance object tree'''
+    # TODO: Support unique values
+    # TODO: What does it mean to be unique in the object tree? If a child node
+    #       is marked unique does that mean that parent nodes need to be checked
+    #       for uniqueness?
+    return x
+  
+  def validate_minimum(self, x, fieldname, fieldtype=types.IntType, minimum=None):
+    '''Validates that the field is longer than or equal to the minimum length if
+       specified'''
+    # TODO: Support array field types.
+    # TODO: Ignore non-array,non-number field types
+    # TODO: What should be done if the type field is an array with number and
+    #       non-number types? What about "any"?
+    if (minimum is not None and x.get(fieldname) is not None):
+      value = x.get(fieldname)
+      if (value is not None and value < minimum):
+        raise ValueError("%s is less than minimum value: %f" % fieldname, minimum)
+    return x
+  
+  def validate_maximum(self, x, fieldname, fieldtype=types.IntType, maximum=None):
+    '''Validates that the field is shorter than or equal to the maximum length
+       if specified'''
+    # TODO: Support array field types.
+    # TODO: Ignore non-array,non-number field types
+    # TODO: What should be done if the type field is an array with number and
+    #       non-number types? What about "any"?
+    if (maximum is not None and x.get(fieldname) is not None):
+      value = x.get(fieldname)
+      if (value is not None and value > maximum):
+        raise ValueError("%s is greater than maximum value: %f" % fieldname, maximum)
+    return x
+  
+  def validate_pattern(self, x, fieldname, fieldtype=None, pattern=None):
+    '''Validates that the field is longer than the minimum length if specified'''
+    # TODO: support regex patterns
+    return x
+  
+  def validate_length(self, x, fieldname, fieldtype=types.StringType, length=None):
+    '''Validates that the value of the given field is shorter than the specified
+       length if a string'''
+    if (length is not None and x.get(fieldname) is not None and len(x.get(fieldname) > length):
+      raise ValueError("%s is greater than maximum value: %f" % fieldname, maximum)
+    return x
+  
+  def validate_options(self, x, fieldname, fieldtype=types.StringType, options=None):
+    '''Validates that the value of the field is equal to one of the specified
+       option values if specified'''
+    if (options is not None and x.get(fieldname) is not None):
+      if (not isinstance(options, types.ListType)):
+        raise ValueError("Options specification for field '%s' is not a list type", fieldname)
+      if (x.get(fieldname) not in options):
+        raise ValueError("Value of field '%s' is not in options specification: %s" % fieldname, repr(options))
+    return x
+  
+  def validate_unconstrained(self, x, fieldname, fieldtype=types.StringType, unconstrained=None):
+    return x
+  
+  def validate_readonly(self, x, fieldname, fieldtype=types.StringType, readonly=None):
+    return x
+  
+  def validate_description(self, x, fieldname, fieldtype=types.StringType, description=None):
+    return x
+  
+  def validate_format(self, x, fieldname, fieldtype=types.StringType, format=None):
+    '''Validates that the value of the field matches the predifined format
+       specified.'''
+    # No definitions are currently defined for formats
+    return x
+  
+  def validate_default(self, x, fieldname, fieldtype=types.StringType, default=None):
+    return x
+  
+  def validate_transient(self, x, fieldname, fieldtype=types.StringType, transient=None):
+    return x
+  
+  #fieldtype2 is required to give the same definition as other validator functions
+  def validate_type(self, x, fieldname, fieldtype=None, fieldtype2=None):
+    '''Validates that the fieldtype specified is correct for the given
+       data'''
+    # fieldtype and fieldtype2 should be the same but we will validate on
+    # fieldtype2 for consistency
+    
+    #TODO: Support values from the 'Schema Definition' section of the proposal
+    if (fieldtype2 is not None and x.get(fieldname) is not None):
+      if isinstance(fieldtype2, types.ListType):
         # Match if type matches any one of the types in the list
         datavalid = False
-        for eachtype in fieldtype:
+        for eachtype in fieldtype2:
           try:
-            self.validate(eachtype, eachtype)
+            self.validate_type(x, fieldname, eachtype, eachtype)
             datavalid = True
             break
           except ValueError:
@@ -78,59 +179,3 @@ class TypeValidator(FieldValidator):
         if not isinstance(x, fieldtype):
           raise ValueError("Data is not of type %s" % repr(fieldtype))
     return x
-
-def schema_validate(schema):
-    '''
-    >>> schema_validate({"name": {"type": "string"}})
-    True
-    >>> schema_validate({"spam": {"type": "object"}})
-    True
-    >>> schema_validate({"spam": {"type": "object", "properties": {"count": {"type": "integer"}}}})
-    True
-    >>> schema_validate({"php": {"foo": ["bar", "baz"]}})
-    Traceback (most recent call last):
-    ...
-    KeyError: 'type'
-    >>> schema_validate({"php": {"type": "bar"}})
-    Traceback (most recent call last):
-    ...
-    KeyError: 'bar'
-    '''
-
-    for name in schema:
-        type = schema[name]['type']
-        
-        validator = TypeValidator(type)
-        
-        if type == 'object':
-            properties = schema.get('properties', None)
-            if properties:
-                schema_validate(properties)
-
-    return True
-
-def validate(schema, json):
-    '''
-    >>> schema = {"name": {"type": "string"}, "age": {"type": "integer"}, "job": {"type": "object", "properties": {"name": {"type": "string"}}}}
-    >>> validate(schema, {"name": "hoge", "age": 1, "job": {"name": "sarary"}})
-    True
-    >>> validate(schema, {})
-    Traceback (most recent call last)
-    ...
-    TypeError: object_handler: "job" is None
-    '''
-
-    for name in schema:
-        type = schema[name]['type']
-        value = json.get(name, None)
-        validator = TypeValidator(type)
-
-        if not validator.validate(value):
-            raise TypeError, '%s: %s is %s' % (handler.__name__, name, value)
-
-        if type == 'object':
-            properties = schema.get('properties', None)
-            if properties:
-                validator.validate(properties, value)
-
-    return True
