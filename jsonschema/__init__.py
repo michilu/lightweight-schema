@@ -41,6 +41,24 @@ typesmap = {
   "any": None
 }
 
+schemadefault = {
+  "optional": False,
+  "nullable": False,
+  "unique": False,
+  "minimum": None,
+  "maximum": None,
+  "pattern": None,
+  "length": None,
+  "options": None,
+  "unconstrained": None,
+  "readonly": None,
+  "description": None,
+  "format": None,
+  "default": None,
+  "transient": None,
+  "type": None
+}
+
 def checktype(fieldtype):
   '''Determines if the type validator can handle the given type'''
   if isinstance(fieldtype, types.TypeType):
@@ -65,7 +83,7 @@ def validate_nullable(x, fieldname, fieldtype=None, nullable=False):
   '''Validates that the given field is not null if the field is present and
      nullable is false'''
   if fieldname in x.keys() and x.get(fieldname) is None and not nullable:
-    raise ValueError("%s is not nullable.")
+    raise ValueError("%s is not nullable." % fieldname)
   return x
 
 def validate_unique(x, fieldname, fieldtype=None, unique=False):
@@ -196,7 +214,13 @@ def validate(data, schema):
   else:
     # Wrap the data in a dictionary
     datadict = {"_data": data }
-    for schemaprop in schema.keys():
+    
+    #Initialize defaults
+    for schemaprop in schemadefault.keys():
+      if schemaprop not in schema:
+        schema[schemaprop] = schemadefault[schemaprop]
+    
+    for schemaprop in schema:
       # print schemaprop
       validatorname = "validate_"+schemaprop
       if validatorname in globals():
