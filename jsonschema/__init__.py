@@ -151,13 +151,14 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
      data'''
   # fieldtype and fieldtype2 should be the same but we will validate on
   # fieldtype2 for consistency
+  converted_fieldtype = convert_type(fieldtype2)
   
   #TODO: Support values from the 'Schema Definition' section of the proposal
-  if (fieldtype2 is not None and x.get(fieldname) is not None):
-    if isinstance(fieldtype2, types.ListType):
+  if (converted_fieldtype is not None and x.get(fieldname) is not None):
+    if isinstance(converted_fieldtype, types.ListType):
       # Match if type matches any one of the types in the list
       datavalid = False
-      for eachtype in fieldtype2:
+      for eachtype in converted_fieldtype:
         try:
           validate_type(x, fieldname, eachtype, eachtype)
           datavalid = True
@@ -165,10 +166,10 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
         except ValueError:
           pass
       if not datavalid:
-        raise ValueError("Data is not in list of types: %s" % repr(fieldtype))
+        raise ValueError("Value %s is not in list of types: %s" % (x.get(fieldname), repr(converted_fieldtype)))
     else:
-      if not isinstance(x, fieldtype):
-        raise ValueError("Data is not of type %s" % repr(fieldtype))
+      if not isinstance(x.get(fieldname), converted_fieldtype):
+        raise ValueError("Value %s is not of type %s" % (x.get(fieldname), repr(converted_fieldtype)))
   return x
   
 def convert_type(fieldtype):
@@ -185,3 +186,14 @@ def convert_type(fieldtype):
       return typesmap[fieldtype]
     else:
       raise ValueError("Field type %s is not supported." % fieldtype)
+
+
+if __name__ == '__main__':
+  x = {"test": "test", "test2": 25, "test3": True, "test4": {"subtest": "test"}}
+  validate_type(x, "test", "string","string")
+  validate_type(x, "test2", "integer", "integer")
+  validate_type(x, "test3", "boolean", "boolean")
+  try:
+    validate_type(x, "test4", "string", "string")
+  except ValueError, e:
+    pass
