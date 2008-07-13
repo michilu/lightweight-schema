@@ -57,7 +57,7 @@ def checktype(fieldtype):
 def validate_optional(x, fieldname, fieldtype=None, optional=False):
   '''Validates that the given field is present if optional is false'''
   # Make sure the field is present
-  if fieldname in x.keys() and not optional:
+  if fieldname not in x.keys() and not optional:
     raise ValueError("Required field %s is missing" % fieldname)
   return x
 
