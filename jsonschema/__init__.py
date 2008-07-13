@@ -86,7 +86,7 @@ def validate_minimum(x, fieldname, fieldtype=types.IntType, minimum=None):
   if minimum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
     if value is not None and value < minimum:
-      raise ValueError("%s is less than minimum value: %f" % fieldname, minimum)
+      raise ValueError("%s is less than minimum value: %f" % value, minimum)
   return x
 
 def validate_maximum(x, fieldname, fieldtype=types.IntType, maximum=None):
@@ -99,7 +99,7 @@ def validate_maximum(x, fieldname, fieldtype=types.IntType, maximum=None):
   if maximum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
     if value is not None and value > maximum:
-      raise ValueError("%s is greater than maximum value: %f" % fieldname, maximum)
+      raise ValueError("%s is greater than maximum value: %f" % value, maximum)
   return x
 
 def validate_pattern(x, fieldname, fieldtype=None, pattern=None):
@@ -110,18 +110,20 @@ def validate_pattern(x, fieldname, fieldtype=None, pattern=None):
 def validate_length(x, fieldname, fieldtype=types.StringType, length=None):
   '''Validates that the value of the given field is shorter than the specified
      length if a string'''
-  if length is not None and x.get(fieldname) is not None and len(x.get(fieldname) > length):
-    raise ValueError("%s is greater than maximum value: %f" % fieldname, maximum)
+  value = x.get(fieldname)
+  if length is not None and value is not None and len(value) > length:
+    raise ValueError("%s is greater than maximum value: %f" % value, maximum)
   return x
 
 def validate_options(x, fieldname, fieldtype=types.StringType, options=None):
   '''Validates that the value of the field is equal to one of the specified
      option values if specified'''
-  if options is not None and x.get(fieldname) is not None:
+  value = x.get(fieldname)
+  if options is not None and value is not None:
     if not isinstance(options, types.ListType):
       raise ValueError("Options specification for field '%s' is not a list type", fieldname)
-    if x.get(fieldname) not in options:
-      raise ValueError("Value of field '%s' is not in options specification: %s" % fieldname, repr(options))
+    if value not in options:
+      raise ValueError("Value %s is not in options specification: %s" % value, repr(options))
   return x
 
 def validate_unconstrained(x, fieldname, fieldtype=types.StringType, unconstrained=None):
@@ -152,6 +154,7 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
   # fieldtype and fieldtype2 should be the same but we will validate on
   # fieldtype2 for consistency
   converted_fieldtype = convert_type(fieldtype2)
+  value = x.get(fieldname)
   
   #TODO: Support values from the 'Schema Definition' section of the proposal
   if converted_fieldtype is not None and x.get(fieldname) is not None:
@@ -166,10 +169,10 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
         except ValueError:
           pass
       if not datavalid:
-        raise ValueError("Value %s is not in list of types: %s" % (x.get(fieldname), repr(converted_fieldtype)))
+        raise ValueError("Value %s is not in list of types: %s" % (value, repr(converted_fieldtype)))
     else:
-      if not isinstance(x.get(fieldname), converted_fieldtype):
-        raise ValueError("Value %s is not of type %s" % (x.get(fieldname), repr(converted_fieldtype)))
+      if not isinstance(value, converted_fieldtype):
+        raise ValueError("Value %s is not of type %s" % (value, repr(converted_fieldtype)))
   return x
   
 def convert_type(fieldtype):
@@ -186,6 +189,21 @@ def convert_type(fieldtype):
       return typesmap[fieldtype]
     else:
       raise ValueError("Field type %s is not supported." % fieldtype)
+
+def validate(data, schema):
+  if isinstance(data, types.DictType):
+    pass
+  else:
+    # Wrap the data in a dictionary
+    datadict = {"_data": data }
+    for schemaprop in schema.keys():
+      # print schemaprop
+      validatorname = "validate_"+schemaprop
+      if validatorname in globals():
+        validator = globals()[validatorname]
+        validator(datadict,"_data", schema.get("type"), schema.get(schemaprop))
+      else:
+        raise ValueError("Schema property %s is not supported" % schemaprop)
 
 if __name__ == '__main__':
   x = {"test": "test", "test2": 25, "test3": True, "test4": {"subtest": "test"}}
