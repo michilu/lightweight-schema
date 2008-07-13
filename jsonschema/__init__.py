@@ -48,7 +48,7 @@ def checktype(fieldtype):
       raise ValueError("Unsupported field type: %s" % fieldtype)
   elif isinstance(fieldtype, types.ListType):
     for mytype in fieldtype:
-      if (checktype(mytype)):
+      if checktype(mytype):
         raise ValueError("Unsupported field type: %s" % mytype)
   else:
     if fieldtype not in typesmap.keys():
@@ -64,7 +64,7 @@ def validate_optional(x, fieldname, fieldtype=None, optional=False):
 def validate_nullable(x, fieldname, fieldtype=None, nullable=False):
   '''Validates that the given field is not null if the field is present and
      nullable is false'''
-  if (fieldname in x.keys() and x.get(fieldname) is None and not nullable):
+  if fieldname in x.keys() and x.get(fieldname) is None and not nullable:
     raise ValueError("%s is not nullable.")
   return x
 
@@ -83,9 +83,9 @@ def validate_minimum(x, fieldname, fieldtype=types.IntType, minimum=None):
   # TODO: Ignore non-array,non-number field types
   # TODO: What should be done if the type field is an array with number and
   #       non-number types? What about "any"?
-  if (minimum is not None and x.get(fieldname) is not None):
+  if minimum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
-    if (value is not None and value < minimum):
+    if value is not None and value < minimum:
       raise ValueError("%s is less than minimum value: %f" % fieldname, minimum)
   return x
 
@@ -96,9 +96,9 @@ def validate_maximum(x, fieldname, fieldtype=types.IntType, maximum=None):
   # TODO: Ignore non-array,non-number field types
   # TODO: What should be done if the type field is an array with number and
   #       non-number types? What about "any"?
-  if (maximum is not None and x.get(fieldname) is not None):
+  if maximum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
-    if (value is not None and value > maximum):
+    if value is not None and value > maximum:
       raise ValueError("%s is greater than maximum value: %f" % fieldname, maximum)
   return x
 
@@ -117,10 +117,10 @@ def validate_length(x, fieldname, fieldtype=types.StringType, length=None):
 def validate_options(x, fieldname, fieldtype=types.StringType, options=None):
   '''Validates that the value of the field is equal to one of the specified
      option values if specified'''
-  if (options is not None and x.get(fieldname) is not None):
-    if (not isinstance(options, types.ListType)):
+  if options is not None and x.get(fieldname) is not None:
+    if not isinstance(options, types.ListType):
       raise ValueError("Options specification for field '%s' is not a list type", fieldname)
-    if (x.get(fieldname) not in options):
+    if x.get(fieldname) not in options:
       raise ValueError("Value of field '%s' is not in options specification: %s" % fieldname, repr(options))
   return x
 
@@ -154,7 +154,7 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
   converted_fieldtype = convert_type(fieldtype2)
   
   #TODO: Support values from the 'Schema Definition' section of the proposal
-  if (converted_fieldtype is not None and x.get(fieldname) is not None):
+  if converted_fieldtype is not None and x.get(fieldname) is not None:
     if isinstance(converted_fieldtype, types.ListType):
       # Match if type matches any one of the types in the list
       datavalid = False
@@ -173,20 +173,19 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
   return x
   
 def convert_type(fieldtype):
-  if (isinstance(fieldtype, types.TypeType)):
+  if isinstance(fieldtype, types.TypeType):
     return fieldtype
-  elif (isinstance(fieldtype, types.ListType)):
+  elif isinstance(fieldtype, types.ListType):
     converted_fields = []
     for subfieldtype in fieldtype:
       converted_fields.append(convert_type(subfieldtype))
     return converted_fields
   else:
     fieldtype = str(fieldtype)
-    if (fieldtype in typesmap.keys()):
+    if fieldtype in typesmap.keys():
       return typesmap[fieldtype]
     else:
       raise ValueError("Field type %s is not supported." % fieldtype)
-
 
 if __name__ == '__main__':
   x = {"test": "test", "test2": 25, "test3": True, "test4": {"subtest": "test"}}
