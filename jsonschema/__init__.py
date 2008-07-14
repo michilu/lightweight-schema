@@ -9,14 +9,12 @@ JSON schema proposal (http://www.json.com/json-schema-proposal/).
 '''
 
 #TODO: Line numbers for error messages
-#TODO: Field names for error messages
 #TODO: Support references
 #TODO: Support inline schema
 #TODO: Add checks to make sure the schema itself is valid
 
 import types, sys, simplejson
 
-# Map of validation functions like 
 
 # ALTERNATIVE: Go back to the class based approach and create validators
 #              but make the type validator a special validator that
@@ -27,6 +25,7 @@ import types, sys, simplejson
 #              object type. Another driver class would perform the recursive
 #              processing.
 
+# Map of schema types to their equivalent in the python types module
 # TODO: Test support for unicode string types
 typesmap = {
   "string": types.StringType,
@@ -38,6 +37,7 @@ typesmap = {
   "any": None
 }
 
+# Default schema property values.
 schemadefault = {
   "optional": False,
   "nullable": False,
