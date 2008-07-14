@@ -16,10 +16,7 @@ JSON schema proposal (http://www.json.com/json-schema-proposal/).
 
 import types, sys, simplejson
 
-# TODO: Create a map of validation functions like Muraoka Yusuke (村岡友介)
-#       created in the original implementation. However, the functions need
-#       to be pulled from the JSONValidator class namespace rather than
-#       the local namespace.
+# Map of validation functions like 
 
 # ALTERNATIVE: Go back to the class based approach and create validators
 #              but make the type validator a special validator that
@@ -213,6 +210,7 @@ def convert_type(fieldtype):
 
 def validate(data, schema):
   if isinstance(data, types.DictType):
+    #TODO: Support object types
     pass
   else:
     # Wrap the data in a dictionary
