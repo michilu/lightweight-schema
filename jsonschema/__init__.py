@@ -125,15 +125,18 @@ def validate_pattern(x, fieldname, fieldtype=None, pattern=None):
   # TODO: support regex patterns
   return x
 
-def validate_length(x, fieldname, fieldtype=types.StringType, length=None):
+def validate_length(x, fieldname, fieldtype=None, length=None):
   '''Validates that the value of the given field is shorter than the specified
      length if a string'''
   value = x.get(fieldname)
-  if length is not None and value is not None and len(value) > length:
+  if length is not None and \
+     value is not None and \
+     isinstance(value, types.StringType) and \
+     len(value) > length:
     raise ValueError("%s is greater than maximum value: %f" % value, maximum)
   return x
 
-def validate_options(x, fieldname, fieldtype=types.StringType, options=None):
+def validate_options(x, fieldname, fieldtype=None, options=None):
   '''Validates that the value of the field is equal to one of the specified
      option values if specified'''
   value = x.get(fieldname)
@@ -144,13 +147,13 @@ def validate_options(x, fieldname, fieldtype=types.StringType, options=None):
       raise ValueError("Value %s is not in options specification: %s" % value, repr(options))
   return x
 
-def validate_unconstrained(x, fieldname, fieldtype=types.StringType, unconstrained=None):
+def validate_unconstrained(x, fieldname, fieldtype=None, unconstrained=None):
   return x
 
-def validate_readonly(x, fieldname, fieldtype=types.StringType, readonly=None):
+def validate_readonly(x, fieldname, fieldtype=None, readonly=None):
   return x
 
-def validate_description(x, fieldname, fieldtype=types.StringType, description=None):
+def validate_description(x, fieldname, fieldtype=None, description=None):
   return x
 
 def validate_format(x, fieldname, fieldtype=types.StringType, format=None):
