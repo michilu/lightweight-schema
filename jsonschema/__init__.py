@@ -201,6 +201,8 @@ def convert_type(fieldtype):
     for subfieldtype in fieldtype:
       converted_fields.append(convert_type(subfieldtype))
     return converted_fields
+  elif fieldtype is None:
+    return None
   else:
     fieldtype = str(fieldtype)
     if fieldtype in typesmap.keys():
