@@ -97,27 +97,25 @@ def validate_unique(x, fieldname, fieldtype=None, unique=False):
 def validate_minimum(x, fieldname, fieldtype=types.IntType, minimum=None):
   '''Validates that the field is longer than or equal to the minimum length if
      specified'''
-  # TODO: Support array field types.
-  # TODO: Ignore non-array,non-number field types
-  # TODO: What should be done if the type field is an array with number and
-  #       non-number types? What about "any"?
   if minimum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
-    if value is not None and value < minimum:
-      raise ValueError("%s is less than minimum value: %f" % value, minimum)
+    if value is not None:
+      if (isinstance(value, types.IntType) or isinstance(value,types.FloatType)) and value < minimum:
+        raise ValueError("%s is less than minimum value: %f" % (value, minimum))
+      elif isinstance(value,types.ListType) and len(value) < minimum:
+        raise ValueError("%s has fewer values than the minimum: %f" % (value, minimum))
   return x
 
 def validate_maximum(x, fieldname, fieldtype=types.IntType, maximum=None):
   '''Validates that the field is shorter than or equal to the maximum length
      if specified'''
-  # TODO: Support array field types.
-  # TODO: Ignore non-array,non-number field types
-  # TODO: What should be done if the type field is an array with number and
-  #       non-number types? What about "any"?
   if maximum is not None and x.get(fieldname) is not None:
     value = x.get(fieldname)
-    if value is not None and value > maximum:
-      raise ValueError("%s is greater than maximum value: %f" % value, maximum)
+    if value is not None:
+      if (isinstance(value, types.IntType) or isinstance(value,types.FloatType)) and value > maximum:
+        raise ValueError("%s is greater than maximum value: %f" % (value, maximum))
+      elif isinstance(value,types.ListType) and len(value) > maximum:
+        raise ValueError("%s has more values than the maximum: %f" % (value, maximum))
   return x
 
 def validate_pattern(x, fieldname, fieldtype=None, pattern=None):
@@ -133,7 +131,7 @@ def validate_length(x, fieldname, fieldtype=None, length=None):
      value is not None and \
      isinstance(value, types.StringType) and \
      len(value) > length:
-    raise ValueError("%s is greater than maximum value: %f" % value, maximum)
+    raise ValueError("%s is greater than maximum value: %f" % (value, length))
   return x
 
 def validate_options(x, fieldname, fieldtype=None, options=None):
