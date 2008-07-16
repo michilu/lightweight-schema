@@ -84,8 +84,12 @@ def validate_optional(x, fieldname, fieldtype=None, optional=False):
 def validate_nullable(x, fieldname, fieldtype=None, nullable=False):
   '''Validates that the given field is not null if the field is present and
      nullable is false'''
-  if fieldname in x.keys() and x.get(fieldname) is None and not nullable:
-    raise ValueError("%s is not nullable." % fieldname)
+  try:
+    if fieldname in x.keys() and x.get(fieldname) is None and not nullable:
+      raise ValueError("%s is not nullable." % fieldname)
+  except AttributeError, e:
+    print fieldname
+    sys.exit()
   return x
 
 def validate_unique(x, fieldname, fieldtype=None, unique=False):
@@ -210,6 +214,10 @@ def convert_type(fieldtype):
     for subfieldtype in fieldtype:
       converted_fields.append(convert_type(subfieldtype))
     return converted_fields
+  elif isinstance(fieldtype, types.DictType):
+    # For JSON object types. If the fieldtype is an object itself then we are
+    # dealing with an object type
+    return types.DictType
   elif fieldtype is None:
     return None
   else:
@@ -220,12 +228,19 @@ def convert_type(fieldtype):
       raise ValueError("Field type %s is not supported." % fieldtype)
 
 def validate(data, schema):
-  if isinstance(data, types.DictType):
-    #TODO: Support object types
-    pass
-  else:
-    # Wrap the data in a dictionary
-    datadict = {"_data": data }
+  '''Validates a piece of json data against the provided schema.'''
+  
+  #TODO: Validate the schema object here.
+  
+  # Wrap the data in a dictionary
+  _validate("_data", {"_data": data}, schema)
+
+def _validate(fieldname, data, schema):
+  #TODO: Should fields that are not specified in the schema be allowed?
+  #      Allowing them for now.
+  if schema:
+    
+    schematype = schema.get("type")
     
     #Initialize defaults
     for schemaprop in schemadefault.keys():
@@ -237,9 +252,18 @@ def validate(data, schema):
       validatorname = "validate_"+schemaprop
       if validatorname in globals():
         validator = globals()[validatorname]
-        validator(datadict,"_data", schema.get("type"), schema.get(schemaprop))
+        validator(data,fieldname, schematype, schema.get(schemaprop))
       else:
         raise ValueError("Schema property %s is not supported" % schemaprop)
+        
+    if isinstance(data, types.DictType) and schematype:
+      # recurse!
+      for key in schematype.keys():
+        # get the data itself
+        realdata = data.get(fieldname)
+        _validate(key, realdata, schematype)
+        
+  return data
 
 if __name__ == '__main__':
   x = {"test": "test", "test2": 25, "test3": True, "test4": {"subtest": "test"}}
