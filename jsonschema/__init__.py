@@ -12,6 +12,11 @@ JSON schema proposal (http://www.json.com/json-schema-proposal/).
 #TODO: Support references
 #TODO: Support inline schema
 #TODO: Add checks to make sure the schema itself is valid
+#TODO: Support adding default values to the original json document if they
+#      aren't present.
+
+#TODO: Support command line validation kind of like how simplejson allows 
+#      encoding using the "python -m<modulename>" format.
 
 import types, sys, simplejson
 
@@ -157,22 +162,28 @@ def validate_format(x, fieldname, fieldtype=types.StringType, format=None):
   # No definitions are currently defined for formats
   return x
 
-def validate_default(x, fieldname, fieldtype=types.StringType, default=None):
+def validate_default(x, fieldname, fieldtype=None, default=None):
   return x
 
-def validate_transient(x, fieldname, fieldtype=types.StringType, transient=None):
+def validate_transient(x, fieldname, fieldtype=None, transient=None):
   return x
 
-#fieldtype2 is required to give the same definition as other validator functions
 def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
   '''Validates that the fieldtype specified is correct for the given
      data'''
+  
+  #fieldtype2 is required to give the same definition as other validator functions
+  
+  #TODO: Support values from the 'Schema Definition' section of the proposal
+  #      What should be done about schema objects? How can they be 
+  #      differentiated from regular child objects? Ignoring them for now.
+  
   # fieldtype and fieldtype2 should be the same but we will validate on
   # fieldtype2 for consistency
   converted_fieldtype = convert_type(fieldtype2)
   value = x.get(fieldname)
   
-  #TODO: Support values from the 'Schema Definition' section of the proposal
+  
   if converted_fieldtype is not None and x.get(fieldname) is not None:
     if isinstance(converted_fieldtype, types.ListType):
       # Match if type matches any one of the types in the list
