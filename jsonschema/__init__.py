@@ -33,13 +33,15 @@ import types, sys, simplejson
 # Map of schema types to their equivalent in the python types module
 # TODO: Test support for unicode string types
 typesmap = {
-  "string": types.StringType,
+  "string": [types.StringType, types.UnicodeType],
   "integer": types.IntType,
-  "float": types.FloatType,
+  "number": [types.IntType, types.FloatType],
   "boolean": types.BooleanType,
   "object": types.DictType,
   "array": types.ListType,
-  "any": None
+  "null": types.NoneType,
+  "any": None,
+  None: None
 }
 
 # Default schema property values.
@@ -200,10 +202,10 @@ def validate_type(x, fieldname, fieldtype=None, fieldtype2=None):
         except ValueError:
           pass
       if not datavalid:
-        raise ValueError("Value %s is not in list of types: %s" % (value, repr(converted_fieldtype)))
+        raise ValueError("Value %s is not of type %s" % (value, repr(fieldtype)))
     else:
       if not isinstance(value, converted_fieldtype):
-        raise ValueError("Value %s is not of type %s" % (value, repr(converted_fieldtype)))
+        raise ValueError("Value %s is not of type %s" % (value, repr(fieldtype)))
   return x
   
 def convert_type(fieldtype):
@@ -214,12 +216,6 @@ def convert_type(fieldtype):
     for subfieldtype in fieldtype:
       converted_fields.append(convert_type(subfieldtype))
     return converted_fields
-  elif isinstance(fieldtype, types.DictType):
-    # For JSON object types. If the fieldtype is an object itself then we are
-    # dealing with an object type
-    return types.DictType
-  elif fieldtype is None:
-    return None
   else:
     fieldtype = str(fieldtype)
     if fieldtype in typesmap.keys():
