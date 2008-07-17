@@ -160,6 +160,9 @@ def validate_readonly(x, fieldname, fieldtype=None, readonly=None):
   return x
 
 def validate_description(x, fieldname, fieldtype=None, description=None):
+  if description is not None and \
+     not isinstance(description, types.StringType):
+    raise ValueError("The description field for %s must be a string" % fieldname);
   return x
 
 def validate_format(x, fieldname, fieldtype=types.StringType, format=None):
@@ -252,12 +255,12 @@ def _validate(fieldname, data, schema):
       else:
         raise ValueError("Schema property %s is not supported" % schemaprop)
         
-    if isinstance(data, types.DictType) and schematype:
-      # recurse!
-      for key in schematype.keys():
-        # get the data itself
-        realdata = data.get(fieldname)
-        _validate(key, realdata, schematype)
+    # if isinstance(data, types.DictType) and schematype:
+    #   # recurse!
+    #   for key in schematype.keys():
+    #     # get the data itself
+    #     realdata = data.get(fieldname)
+    #     _validate(key, realdata, schematype)
         
   return data
 
