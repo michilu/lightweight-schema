@@ -147,7 +147,7 @@ def validate_pattern(x, fieldname, fieldtype=None, pattern=None):
   # TODO: support regex patterns
   return x
 
-def validate_length(x, fieldname, fieldtype=None, length=None):
+def validate_maxLength(x, fieldname, fieldtype=None, length=None):
   '''Validates that the value of the given field is shorter than the specified
      length if a string'''
   value = x.get(fieldname)
@@ -155,7 +155,18 @@ def validate_length(x, fieldname, fieldtype=None, length=None):
      value is not None and \
      isinstance(value, types.StringType) and \
      len(value) > length:
-    raise ValueError("%s is greater than maximum value: %f" % (value, length))
+    raise ValueError("Length of '%s' must be more than %f" % (value, length))
+  return x
+  
+def validate_minLength(x, fieldname, fieldtype=None, length=None):
+  '''Validates that the value of the given field is longer than the specified
+     length if a string'''
+  value = x.get(fieldname)
+  if length is not None and \
+     value is not None and \
+     isinstance(value, types.StringType) and \
+     len(value) < length:
+    raise ValueError("Length of '%s' must be more than %f" % (value, length))
   return x
 
 def validate_options(x, fieldname, fieldtype=None, options=None):
