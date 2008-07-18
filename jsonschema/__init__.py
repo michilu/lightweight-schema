@@ -102,6 +102,22 @@ def validate_unique(x, fieldname, fieldtype=None, unique=False):
   #       for uniqueness?
   return x
 
+def validate_minItems(x, fieldname, fieldtype=types.ListType, minitems=None):
+  if minitems is not None and x.get(fieldname) is not None:
+    value = x.get(fieldname)
+    if value is not None:
+      if isinstance(value, types.ListType) and len(value) < minitems:
+        raise ValueError("%s must have a minimum of %d items" % (fieldname, minitems))
+  return x
+
+def validate_maxItems(x, fieldname, fieldtype=types.ListType, maxitems=None):
+  if maxitems is not None and x.get(fieldname) is not None:
+    value = x.get(fieldname)
+    if value is not None:
+      if isinstance(value, types.ListType) and len(value) > maxitems:
+        raise ValueError("%s must have a maximum of %d items" % (fieldname, maxitems))
+  return x
+
 def validate_minimum(x, fieldname, fieldtype=types.IntType, minimum=None):
   '''Validates that the field is longer than or equal to the minimum length if
      specified'''
