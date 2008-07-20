@@ -42,8 +42,7 @@ class JSONSchemaValidator:
     "object": types.DictType,
     "array": types.ListType,
     "null": types.NoneType,
-    "any": None,
-    None: None
+    "any": None
   }
   
   # Default schema property values.
@@ -125,7 +124,10 @@ class JSONSchemaValidator:
   def validate_additionalProperties(self, x, fieldname, fieldtype=None, properties=None):
     return x
   
-  def validate_requires(self, x, fieldname, fieldtype=None, requires=False):
+  def validate_requires(self, x, fieldname, fieldtype=None, requires=None):
+    if x.get(fieldname) is not None and requires is not None:
+      if x.get(requires) is None:
+        raise ValueError("%s is required by field %s" % (requires, fieldname))
     return x
   
   def validate_unique(self, x, fieldname, fieldtype=None, unique=False):
@@ -285,6 +287,8 @@ class JSONSchemaValidator:
       for subfieldtype in fieldtype:
         converted_fields.append(self.convert_type(subfieldtype))
       return converted_fields
+    elif fieldtype is None:
+      return None
     else:
       fieldtype = str(fieldtype)
       if fieldtype in self.typesmap.keys():
