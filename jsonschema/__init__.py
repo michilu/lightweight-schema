@@ -223,12 +223,15 @@ class JSONSchemaValidator:
     return x
   
   def validate_title(self, x, fieldname, fieldtype=None, title=None):
+    if title is not None and \
+       not isinstance(title, types.StringType):
+      raise ValueError("The title for %s must be a string" % fieldname);
     return x
   
   def validate_description(self, x, fieldname, fieldtype=None, description=None):
     if description is not None and \
        not isinstance(description, types.StringType):
-      raise ValueError("The description field for %s must be a string" % fieldname);
+      raise ValueError("The description for %s must be a string" % fieldname);
     return x
   
   def validate_format(self, x, fieldname, fieldtype=types.StringType, format=None):
