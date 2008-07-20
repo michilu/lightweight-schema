@@ -75,19 +75,11 @@ class JSONSchemaValidator:
     "extends": None
   }
   
-  def validate_type(self, x, fieldname, fieldtype=None, fieldtype2=None):
+  def validate_type(self, x, fieldname, schema, fieldtype=None):
     '''Validates that the fieldtype specified is correct for the given
        data'''
     
-    #fieldtype2 is required to give the same definition as other validator functions
-    
-    #TODO: Support values from the 'Schema Definition' section of the proposal
-    #      What should be done about schema objects? How can they be 
-    #      differentiated from regular child objects? Ignoring them for now.
-    
-    # fieldtype and fieldtype2 should be the same but we will validate on
-    # fieldtype2 for consistency
-    converted_fieldtype = self.convert_type(fieldtype2)
+    converted_fieldtype = self.convert_type(fieldtype)
     value = x.get(fieldname)
     
     if converted_fieldtype is not None and x.get(fieldname) is not None:
@@ -108,29 +100,29 @@ class JSONSchemaValidator:
           raise ValueError("Value %s is not of type %s" % (value, repr(fieldtype)))
     return x
   
-  def validate_properties(self, x, fieldname, fieldtype=None, properties=None):
+  def validate_properties(self, x, fieldname, schema, properties=None):
     return x
   
-  def validate_items(self, x, fieldname, fieldtype=None, items=None):
+  def validate_items(self, x, fieldname, schema, items=None):
     return x
   
-  def validate_optional(self, x, fieldname, fieldtype=None, optional=False):
+  def validate_optional(self, x, fieldname, schema, optional=False):
     '''Validates that the given field is present if optional is false'''
     # Make sure the field is present
     if fieldname not in x.keys() and not optional:
       raise ValueError("Required field %s is missing" % fieldname)
     return x
   
-  def validate_additionalProperties(self, x, fieldname, fieldtype=None, properties=None):
+  def validate_additionalProperties(self, x, fieldname, schema, properties=None):
     return x
   
-  def validate_requires(self, x, fieldname, fieldtype=None, requires=None):
+  def validate_requires(self, x, fieldname, schema, requires=None):
     if x.get(fieldname) is not None and requires is not None:
       if x.get(requires) is None:
         raise ValueError("%s is required by field %s" % (requires, fieldname))
     return x
   
-  def validate_unique(self, x, fieldname, fieldtype=None, unique=False):
+  def validate_unique(self, x, fieldname, schema, unique=False):
     '''Validates that the given field is unique in the instance object tree'''
     # TODO: Support unique values
     # TODO: What does it mean to be unique in the object tree? If a child node
@@ -138,7 +130,7 @@ class JSONSchemaValidator:
     #       for uniqueness?
     return x
   
-  def validate_minimum(self, x, fieldname, fieldtype=types.IntType, minimum=None):
+  def validate_minimum(self, x, fieldname, schema, minimum=None):
     '''Validates that the field is longer than or equal to the minimum length if
        specified'''
     if minimum is not None and x.get(fieldname) is not None:
@@ -150,7 +142,7 @@ class JSONSchemaValidator:
           raise ValueError("%s has fewer values than the minimum: %f" % (value, minimum))
     return x
   
-  def validate_maximum(self, x, fieldname, fieldtype=types.IntType, maximum=None):
+  def validate_maximum(self, x, fieldname, schema, maximum=None):
     '''Validates that the field is shorter than or equal to the maximum length
        if specified'''
     if maximum is not None and x.get(fieldname) is not None:
@@ -162,7 +154,7 @@ class JSONSchemaValidator:
           raise ValueError("%s has more values than the maximum: %f" % (value, maximum))
     return x
   
-  def validate_minItems(self, x, fieldname, fieldtype=types.ListType, minitems=None):
+  def validate_minItems(self, x, fieldname, schema, minitems=None):
     if minitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -170,7 +162,7 @@ class JSONSchemaValidator:
           raise ValueError("%s must have a minimum of %d items" % (fieldname, minitems))
     return x
   
-  def validate_maxItems(self, x, fieldname, fieldtype=types.ListType, maxitems=None):
+  def validate_maxItems(self, x, fieldname, schema, maxitems=None):
     if maxitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -178,7 +170,7 @@ class JSONSchemaValidator:
           raise ValueError("%s must have a maximum of %d items" % (fieldname, maxitems))
     return x
   
-  def validate_pattern(self, x, fieldname, fieldtype=None, pattern=None):
+  def validate_pattern(self, x, fieldname, schema, pattern=None):
     '''Validates that the given field, if a string, matches the given regular
        expression.'''
     value = x.get(fieldname)
@@ -190,7 +182,7 @@ class JSONSchemaValidator:
         raise ValueError("%s does not match regular expression %s" % (value, pattern))
     return x
   
-  def validate_maxLength(self, x, fieldname, fieldtype=None, length=None):
+  def validate_maxLength(self, x, fieldname, schema, length=None):
     '''Validates that the value of the given field is shorter than the specified
        length if a string'''
     value = x.get(fieldname)
@@ -201,7 +193,7 @@ class JSONSchemaValidator:
       raise ValueError("Length of '%s' must be more than %f" % (value, length))
     return x
     
-  def validate_minLength(self, x, fieldname, fieldtype=None, length=None):
+  def validate_minLength(self, x, fieldname, schema, length=None):
     '''Validates that the value of the given field is longer than the specified
        length if a string'''
     value = x.get(fieldname)
@@ -212,7 +204,7 @@ class JSONSchemaValidator:
       raise ValueError("Length of '%s' must be more than %f" % (value, length))
     return x
   
-  def validate_enum(self, x, fieldname, fieldtype=None, options=None):
+  def validate_enum(self, x, fieldname, schema, options=None):
     '''Validates that the value of the field is equal to one of the specified
        option values if specified'''
     value = x.get(fieldname)
@@ -223,54 +215,54 @@ class JSONSchemaValidator:
         raise ValueError("Enumeration for field '%s' is not a list type", fieldname)
     return x
   
-  def validate_options(self, x, fieldname, fieldtype=None, options=None):
+  def validate_options(self, x, fieldname, schema, options=None):
     return x
   
-  def validate_readonly(self, x, fieldname, fieldtype=None, readonly=False):
+  def validate_readonly(self, x, fieldname, schema, readonly=False):
     return x
   
-  def validate_title(self, x, fieldname, fieldtype=None, title=None):
+  def validate_title(self, x, fieldname, schema, title=None):
     if title is not None and \
        not isinstance(title, types.StringType):
       raise ValueError("The title for %s must be a string" % fieldname);
     return x
   
-  def validate_description(self, x, fieldname, fieldtype=None, description=None):
+  def validate_description(self, x, fieldname, schema, description=None):
     if description is not None and \
        not isinstance(description, types.StringType):
       raise ValueError("The description for %s must be a string" % fieldname);
     return x
   
-  def validate_format(self, x, fieldname, fieldtype=types.StringType, format=None):
+  def validate_format(self, x, fieldname, schema, format=None):
     '''Validates that the value of the field matches the predifined format
        specified.'''
     # No definitions are currently defined for formats
     return x
   
-  def validate_default(self, x, fieldname, fieldtype=None, default=None):
+  def validate_default(self, x, fieldname, schema, default=None):
     return x
   
-  def validate_transient(self, x, fieldname, fieldtype=None, transient=False):
+  def validate_transient(self, x, fieldname, schema, transient=False):
     return x
   
-  def validate_maxDecimal(self, x, fieldname, fieldtype=None, maxdecimal=None):
+  def validate_maxDecimal(self, x, fieldname, schema, maxdecimal=None):
     return x
   
-  def validate_hidden(self, x, fieldname, fieldtype=None, hidden=False):
+  def validate_hidden(self, x, fieldname, schema, hidden=False):
     return x
   
-  def validate_disallow(self, x, fieldname, fieldtype=None, disallow=None):
+  def validate_disallow(self, x, fieldname, schema, disallow=None):
     '''Validates that the value of the given field does not match the disallowed
        type.'''
     if disallow is not None:
       try:
-        self.validate_type(x, fieldname, fieldtype, disallow)
+        self.validate_type(x, fieldname, schema, disallow)
       except ValueError:
         return x
       raise ValueError("Type %s is disallowed for field %s" % (disallow, fieldname))
     return x
   
-  def validate_extends(self, x, fieldname, fieldtype=None, extends=None):
+  def validate_extends(self, x, fieldname, schema, extends=None):
     return x
   
   # def validate_nullable(self, x, fieldname, fieldtype=None, nullable=False):
@@ -325,9 +317,7 @@ class JSONSchemaValidator:
   def _validate(self, fieldname, data, schema):
     #TODO: Should fields that are not specified in the schema be allowed?
     #      Allowing them for now.
-    if schema:
-      
-      schematype = schema.get("type")
+    if schema is not None:
       
       #Initialize defaults
       for schemaprop in self.schemadefault.keys():
@@ -340,7 +330,7 @@ class JSONSchemaValidator:
         
         try:
            validator = getattr(self, validatorname)
-           validator(data,fieldname, schematype, schema.get(schemaprop))
+           validator(data,fieldname, schema, schema.get(schemaprop))
         except AttributeError:
           raise ValueError("Schema property %s is not supported" % schemaprop)
           
@@ -356,13 +346,3 @@ class JSONSchemaValidator:
 def validate(data, schema):
   validator = JSONSchemaValidator()
   return validator.validate(data,schema)
-
-if __name__ == '__main__':
-  x = {"test": "test", "test2": 25, "test3": True, "test4": {"subtest": "test"}}
-  validate_type(x, "test", "string","string")
-  validate_type(x, "test2", "integer", "integer")
-  validate_type(x, "test3", "boolean", "boolean")
-  try:
-    validate_type(x, "test4", "string", "string")
-  except ValueError, e:
-    pass
