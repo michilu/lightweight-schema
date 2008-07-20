@@ -47,6 +47,7 @@ class JSONSchemaValidator:
   
   # Default schema property values.
   schemadefault = {
+    "id": None,
     "type": None,
     "properties": None,
     "items": None,
@@ -74,6 +75,13 @@ class JSONSchemaValidator:
     "disallow": None,
     "extends": None
   }
+  
+  refmap = {}
+  
+  def validate_id(self, x, fieldname, schema, ID=None):
+    if ID is not None:
+      self.refmap[ID] = schema
+    return x
   
   def validate_type(self, x, fieldname, schema, fieldtype=None):
     '''Validates that the fieldtype specified is correct for the given
@@ -311,6 +319,7 @@ class JSONSchemaValidator:
     
     #TODO: Validate the schema object here.
     
+    self.refmap = {}
     # Wrap the data in a dictionary
     self._validate("_data", {"_data": data}, schema)
   
