@@ -285,18 +285,18 @@ class JSONSchemaValidator:
   #     sys.exit()
   #   return x
   
-  def checktype(self, fieldtype):
-    '''Determines if the type validator can handle the given type'''
-    if isinstance(fieldtype, types.TypeType):
-      if fieldtype not in self.typesmap.values():
-        raise ValueError("Unsupported field type: %s" % fieldtype)
-    elif isinstance(fieldtype, types.ListType):
-      for mytype in fieldtype:
-        if checktype(mytype):
-          raise ValueError("Unsupported field type: %s" % mytype)
-    else:
-      if fieldtype not in self.typesmap.keys():
-        raise ValueError("Unsupported field type: %s" % fieldtype)
+  # def checktype(self, fieldtype):
+  #   '''Determines if the type validator can handle the given type'''
+  #   if isinstance(fieldtype, types.TypeType):
+  #     if fieldtype not in self.typesmap.values():
+  #       raise ValueError("Unsupported field type: %s" % fieldtype)
+  #   elif isinstance(fieldtype, types.ListType):
+  #     for mytype in fieldtype:
+  #       if checktype(mytype):
+  #         raise ValueError("Unsupported field type: %s" % mytype)
+  #   else:
+  #     if fieldtype not in self.typesmap.keys():
+  #       raise ValueError("Unsupported field type: %s" % fieldtype)
   
   def convert_type(self, fieldtype):
     if isinstance(fieldtype, types.TypeType):
