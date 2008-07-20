@@ -79,6 +79,7 @@ class JSONSchemaValidator:
   refmap = {}
   
   def validate_id(self, x, fieldname, schema, ID=None):
+    '''Validates a schema id and adds it to the schema reference map'''
     if ID is not None:
       self.refmap[ID] = schema
     return x
@@ -315,7 +316,7 @@ class JSONSchemaValidator:
         raise ValueError("Field type %s is not supported." % fieldtype)
   
   def validate(self, data, schema):
-    '''Validates a piece of json data against the provided schema.'''
+    '''Validates a piece of json data against the provided json-schema.'''
     
     #TODO: Validate the schema object here.
     
