@@ -253,6 +253,14 @@ class JSONSchemaValidator:
     return x
   
   def validate_disallow(self, x, fieldname, fieldtype=None, disallow=None):
+    '''Validates that the value of the given field does not match the disallowed
+       type.'''
+    if disallow is not None:
+      try:
+        self.validate_type(x, fieldname, fieldtype, disallow)
+      except ValueError:
+        return x
+      raise ValueError("Type %s is disallowed for field %s" % (disallow, fieldname))
     return x
   
   def validate_extends(self, x, fieldname, fieldtype=None, extends=None):
