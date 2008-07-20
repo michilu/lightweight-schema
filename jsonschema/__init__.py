@@ -18,7 +18,7 @@ JSON schema proposal (http://www.json.com/json-schema-proposal/).
 #TODO: Support command line validation kind of like how simplejson allows 
 #      encoding using the "python -m<modulename>" format.
 
-import types, sys, simplejson
+import types, sys, re
 
 
 
@@ -179,8 +179,15 @@ class JSONSchemaValidator:
     return x
   
   def validate_pattern(self, x, fieldname, fieldtype=None, pattern=None):
-    '''Validates that the field is longer than the minimum length if specified'''
-    # TODO: support regex patterns
+    '''Validates that the given field, if a string, matches the given regular
+       expression.'''
+    value = x.get(fieldname)
+    if pattern is not None and \
+       value is not None and \
+       isinstance(value, types.StringType):
+      p = re.compile(pattern)
+      if not p.match(value):
+        raise ValueError("%s does not match regular expression %s" % (value, pattern))
     return x
   
   def validate_maxLength(self, x, fieldname, fieldtype=None, length=None):
