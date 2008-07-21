@@ -101,10 +101,10 @@ class JSONSchemaValidator:
           except ValueError:
             pass
         if not datavalid:
-          raise ValueError("Value %s is not of type %s" % (value, repr(fieldtype)))
+          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
       else:
         if not isinstance(value, converted_fieldtype):
-          raise ValueError("Value %s is not of type %s" % (value, repr(fieldtype)))
+          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
     return x
   
   def validate_properties(self, x, fieldname, schema, properties=None):
