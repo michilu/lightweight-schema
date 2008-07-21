@@ -4,8 +4,57 @@
 #:folding=explicit:collapseFolds=1:
 
 '''
-Provides JSON schema validation based on the specifications of the the 
-JSON schema proposal (http://www.json.com/json-schema-proposal/).
+A complete, full-featured validator for JSON Schema
+
+JSON Schema validation is based on the specifications of the the 
+JSON Schema Proposal Second Draft
+(http://groups.google.com/group/json-schema/web/json-schema-proposal---second-draft).
+
+jsonschema provides an API similar to simplejson in that validators can be
+overridden to support special property support or extended functionality.
+
+Parsing a simple JSON document
+
+>>> import jsonschema
+>>> jsonschema.validate("simplejson", {"type":"string"})
+
+Parsing a more complex JSON document.
+
+>>> import simplejson
+>>> import jsonschema
+>>> 
+>>> data = simplejson.loads('["foo", {"bar":["baz", null, 1.0, 2]}]')
+>>> schema = {
+...   "type":"array", 
+...   "items":[
+...     {"type":"string"},
+...     {"type":"object",
+...      "properties":{
+...        "bar":{
+...          "items":[
+...            {"type":"string"},
+...            {"type":"any"},
+...            {"type":"number"},
+...            {"type":"integer"}
+...          ]
+...        }
+...      }
+...    }
+...   ]
+... }
+>>> jsonschema.validate(data,schema)
+
+Handling validation errors
+ValueErrors are thrown when validation errors occur.
+
+>>> import jsonschema
+>>> try:
+...     jsonschema.validate("simplejson", {"type":"string","minLength":15})
+... except ValueError, e:
+...     print e.message
+... 
+Length of 'simplejson' must be more than 15.000000
+
 '''
 
 #TODO: Line numbers for error messages
