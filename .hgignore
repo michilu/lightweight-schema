@@ -6,7 +6,10 @@ syntax: glob
 *.marks
 *.o
 *.pyc
-Thumbs.db
+jsonschema.egg-info
+build
+temp
+dist
 
 syntax: regexp
 .*\#.*\#$ 
