@@ -20,8 +20,6 @@ JSON schema proposal (http://www.json.com/json-schema-proposal/).
 
 import types, sys, re
 
-
-
 class JSONSchemaValidator:
   # ALTERNATIVE: Go back to the class based approach and create validators
   #              but make the type validator a special validator that
@@ -164,6 +162,8 @@ class JSONSchemaValidator:
     return x
   
   def validate_minItems(self, x, fieldname, schema, minitems=None):
+    '''Validates that the number of items in the given field is equal to or
+       more than the minimum amount'''
     if minitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -172,6 +172,8 @@ class JSONSchemaValidator:
     return x
   
   def validate_maxItems(self, x, fieldname, schema, maxitems=None):
+    '''Validates that the number of items in the given field is equal to or
+       less than the maximum amount'''
     if maxitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -192,8 +194,8 @@ class JSONSchemaValidator:
     return x
   
   def validate_maxLength(self, x, fieldname, schema, length=None):
-    '''Validates that the value of the given field is shorter than the specified
-       length if a string'''
+    '''Validates that the value of the given field is shorter than or equal to
+       the specified length if a string'''
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
@@ -203,8 +205,8 @@ class JSONSchemaValidator:
     return x
     
   def validate_minLength(self, x, fieldname, schema, length=None):
-    '''Validates that the value of the given field is longer than the specified
-       length if a string'''
+    '''Validates that the value of the given field is longer than or equal to
+       the specified length if a string'''
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
@@ -249,12 +251,24 @@ class JSONSchemaValidator:
     return x
   
   def validate_default(self, x, fieldname, schema, default=None):
+    '''Adds default data to the original json document if the document is
+       not readonly'''
+    if fieldname not in x.keys() and default is not None:
+      if not schema.get("readonly"):
+        x[fieldname] = default
     return x
   
   def validate_transient(self, x, fieldname, schema, transient=False):
     return x
   
   def validate_maxDecimal(self, x, fieldname, schema, maxdecimal=None):
+    '''Validates that the value of the given field has less than or equal to
+       the maximum number of decimal places given'''
+    value = x.get(fieldname)
+    if maxdecimal is not None and value is not None:
+      maxdecstring = str(value)
+      if len(maxdecstring[maxdecstring.find(".")+1:]) > maxdecimal:
+        raise ValueError("%s must not have more than %d decimal places" % (value, maxdecimal))
     return x
   
   def validate_hidden(self, x, fieldname, schema, hidden=False):
