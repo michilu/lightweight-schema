@@ -116,12 +116,37 @@ class JSONSchemaValidator:
         if isinstance(value, types.DictType):
           if isinstance(properties, types.DictType):
             for eachProp in properties.keys():
-              self._validate(eachProp, value, properties.get(eachProp))
+              self.__validate(eachProp, value, properties.get(eachProp))
           else:
             raise ValueError("Properties definition of %s is not an object" % fieldname)
     return x
   
   def validate_items(self, x, fieldname, schema, items=None):
+    '''Validates that all items in the list for the given field match the given
+       schema'''
+    if items is not None and x.get(fieldname) is not None:
+      value = x.get(fieldname)
+      if value is not None:
+        if isinstance(value, types.ListType):
+          if isinstance(items, types.ListType):
+            if len(items) == len(value):
+              for itemIndex in range(len(items)):
+                try:
+                  self.validate(value[itemIndex], items[itemIndex])
+                except ValueError, e:
+                  raise ValueError("Failed to validate list schema: %s" % (fieldname, repr(e.message)))
+            else:
+              raise ValueError("Length of list %s is not equal to length of schema list" % repr(value))
+          elif isinstance(items, types.DictType):
+            for eachItem in value:
+                try:
+                  # print eachItem
+                  # print repr(items)
+                  self._validate(eachItem, items)
+                except ValueError, e:
+                  raise ValueError("Failed to validate %s list schema: %s" % (fieldname, repr(e.message)))
+          else:
+            raise ValueError("Properties definition of %s is not a list or an object" % fieldname)
     return x
   
   def validate_optional(self, x, fieldname, schema, optional=False):
@@ -347,9 +372,12 @@ class JSONSchemaValidator:
     
     self.refmap = {}
     # Wrap the data in a dictionary
-    self._validate("_data", {"_data": data}, schema)
+    self._validate(data, schema)
   
-  def _validate(self, fieldname, data, schema):
+  def _validate(self, data, schema):
+    self.__validate("_data", {"_data": data}, schema)
+  
+  def __validate(self, fieldname, data, schema):
     #TODO: Should fields that are not specified in the schema be allowed?
     #      Allowing them for now.
     if schema is not None:
@@ -366,7 +394,7 @@ class JSONSchemaValidator:
         try:
           validator = getattr(self, validatorname)
           validator(data,fieldname, schema, schema.get(schemaprop))
-        except AttributeError:
+        except AttributeError, e:
           raise ValueError("Schema property %s is not supported" % schemaprop)
           
       # if isinstance(data, types.DictType) and schematype:
