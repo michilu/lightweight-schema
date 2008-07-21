@@ -108,6 +108,17 @@ class JSONSchemaValidator:
     return x
   
   def validate_properties(self, x, fieldname, schema, properties=None):
+    '''Validates properties of a JSON object by processing the object's schema
+       recursively'''
+    if properties is not None and x.get(fieldname) is not None:
+      value = x.get(fieldname)
+      if value is not None:
+        if isinstance(value, types.DictType):
+          if isinstance(properties, types.DictType):
+            for eachProp in properties.keys():
+              self._validate(eachProp, value, properties.get(eachProp))
+          else:
+            raise ValueError("Properties definition of %s is not an object" % fieldname)
     return x
   
   def validate_items(self, x, fieldname, schema, items=None):
@@ -353,8 +364,8 @@ class JSONSchemaValidator:
         validatorname = "validate_"+schemaprop
         
         try:
-           validator = getattr(self, validatorname)
-           validator(data,fieldname, schema, schema.get(schemaprop))
+          validator = getattr(self, validatorname)
+          validator(data,fieldname, schema, schema.get(schemaprop))
         except AttributeError:
           raise ValueError("Schema property %s is not supported" % schemaprop)
           
