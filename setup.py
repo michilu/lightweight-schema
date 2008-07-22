@@ -53,5 +53,6 @@ setup(name='jsonschema',
       license="MIT License",
       platforms=["any"],
       packages=find_packages(exclude=['ez_setup']),
+      test_suite="jsonschema.tests",
       zip_safe=True
      )
