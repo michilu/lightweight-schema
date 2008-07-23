@@ -68,9 +68,17 @@ class JSONSchemaValidator:
        data'''
     
     converted_fieldtype = self.convert_type(fieldtype)
-    value = x.get(fieldname)
     
-    if converted_fieldtype is not None and x.get(fieldname) is not None:
+    # We need to know if the field exists or if it's just Null
+    fieldexists = True
+    try:
+      value = x[fieldname]
+    except KeyError:
+      fieldexists = False
+    finally:
+      value = x.get(fieldname)
+    
+    if converted_fieldtype is not None and fieldexists:
       if isinstance(converted_fieldtype, types.ListType):
         # Match if type matches any one of the types in the list
         datavalid = False
@@ -84,7 +92,11 @@ class JSONSchemaValidator:
         if not datavalid:
           raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
       else:
-        if not isinstance(value, converted_fieldtype):
+        # isinstance(True, types.IntType) returns true so we need to write a
+        # workaround
+        if converted_fieldtype == types.IntType and isinstance(value,types.BooleanType):
+          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
+        elif not isinstance(value, converted_fieldtype):
           raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
     return x
   
