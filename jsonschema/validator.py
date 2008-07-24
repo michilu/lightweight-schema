@@ -11,6 +11,8 @@
 import types, sys, re
 
 class JSONSchemaValidator:
+  '''Implementation of the json-schema validator that adheres to the 
+     JSON Schema Proposal 2nd Draft'''
   
   # Map of schema types to their equivalent in the python types module
   typesmap = {
@@ -398,3 +400,5 @@ class JSONSchemaValidator:
       #     _validate(key, realdata, schematype)
           
     return data
+
+__all__ = [ 'JSONSchemaValidator' ]

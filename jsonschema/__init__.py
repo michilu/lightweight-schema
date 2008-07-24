@@ -63,8 +63,12 @@ Length of 'simplejson' must be more than 15.000000
 #      encoding using the "python -m<modulename>" format.
 #TODO: Support encodings other than utf-8
 
+from validator import JSONSchemaValidator
+
 def validate(data, schema):
   '''Validates a parsed json document against the provided schema'''
-  from validator import JSONSchemaValidator
   validator = JSONSchemaValidator()
   return validator.validate(data,schema)
+
+__all__ = [ 'validate', 'JSONSchemaValidator' ]
+__version__ = '0.1a'
