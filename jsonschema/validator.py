@@ -15,7 +15,7 @@ class JSONSchemaValidator:
      JSON Schema Proposal 2nd Draft'''
   
   # Map of schema types to their equivalent in the python types module
-  typesmap = {
+  _typesmap = {
     "string": [types.StringType, types.UnicodeType],
     "integer": types.IntType,
     "number": [types.IntType, types.FloatType],
@@ -27,7 +27,7 @@ class JSONSchemaValidator:
   }
   
   # Default schema property values.
-  schemadefault = {
+  _schemadefault = {
     "id": None,
     "type": None,
     "properties": None,
@@ -57,19 +57,19 @@ class JSONSchemaValidator:
     "extends": None
   }
   
-  refmap = {}
+  _refmap = {}
   
   def validate_id(self, x, fieldname, schema, ID=None):
     '''Validates a schema id and adds it to the schema reference map'''
     if ID is not None:
-      self.refmap[ID] = schema
+      self._refmap[ID] = schema
     return x
   
   def validate_type(self, x, fieldname, schema, fieldtype=None):
     '''Validates that the fieldtype specified is correct for the given
        data'''
     
-    converted_fieldtype = self.convert_type(fieldtype)
+    converted_fieldtype = self._convert_type(fieldtype)
     
     # We need to know if the field exists or if it's just Null
     fieldexists = True
@@ -319,44 +319,20 @@ class JSONSchemaValidator:
   def validate_extends(self, x, fieldname, schema, extends=None):
     return x
   
-  # def validate_nullable(self, x, fieldname, fieldtype=None, nullable=False):
-  #   '''Validates that the given field is not null if the field is present and
-  #      nullable is false'''
-  #   try:
-  #     if fieldname in x.keys() and x.get(fieldname) is None and not nullable:
-  #       raise ValueError("%s is not nullable." % fieldname)
-  #   except AttributeError, e:
-  #     print fieldname
-  #     sys.exit()
-  #   return x
-  
-  # def checktype(self, fieldtype):
-  #   '''Determines if the type validator can handle the given type'''
-  #   if isinstance(fieldtype, types.TypeType):
-  #     if fieldtype not in self.typesmap.values():
-  #       raise ValueError("Unsupported field type: %s" % fieldtype)
-  #   elif isinstance(fieldtype, types.ListType):
-  #     for mytype in fieldtype:
-  #       if checktype(mytype):
-  #         raise ValueError("Unsupported field type: %s" % mytype)
-  #   else:
-  #     if fieldtype not in self.typesmap.keys():
-  #       raise ValueError("Unsupported field type: %s" % fieldtype)
-  
-  def convert_type(self, fieldtype):
+  def _convert_type(self, fieldtype):
     if isinstance(fieldtype, types.TypeType):
       return fieldtype
     elif isinstance(fieldtype, types.ListType):
       converted_fields = []
       for subfieldtype in fieldtype:
-        converted_fields.append(self.convert_type(subfieldtype))
+        converted_fields.append(self._convert_type(subfieldtype))
       return converted_fields
     elif fieldtype is None:
       return None
     else:
       fieldtype = str(fieldtype)
-      if fieldtype in self.typesmap.keys():
-        return self.typesmap[fieldtype]
+      if fieldtype in self._typesmap.keys():
+        return self._typesmap[fieldtype]
       else:
         raise ValueError("Field type %s is not supported." % fieldtype)
   
@@ -365,7 +341,7 @@ class JSONSchemaValidator:
     
     #TODO: Validate the schema object here.
     
-    self.refmap = {}
+    self._refmap = {}
     # Wrap the data in a dictionary
     self._validate(data, schema)
   
@@ -378,9 +354,9 @@ class JSONSchemaValidator:
     if schema is not None:
       
       #Initialize defaults
-      for schemaprop in self.schemadefault.keys():
+      for schemaprop in self._schemadefault.keys():
         if schemaprop not in schema:
-          schema[schemaprop] = self.schemadefault[schemaprop]
+          schema[schemaprop] = self._schemadefault[schemaprop]
       
       for schemaprop in schema:
         # print schemaprop
