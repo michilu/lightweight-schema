@@ -7,9 +7,9 @@ class TestOptional(TestCase):
   
   props = {
     "prop01": {"type":"string"},
-    "prop02": {"type":"number", "optional":False},
+    "prop02": {"type":"number", "optional":True},
     "prop03": {"type":"integer"},
-    "prop04": {"type":"boolean"}
+    "prop04": {"type":"boolean", "optional":False}
   }
   schema = {"type": "object", "properties":props}
   
@@ -17,7 +17,9 @@ class TestOptional(TestCase):
   def test_optional1(self):
     
     x = {
-      "prop02":"blah"
+      "prop01":"test",
+      "prop03": 1,
+      "prop04": False
     }
     
     try:
@@ -28,9 +30,7 @@ class TestOptional(TestCase):
   def test_optional2(self):
     
     x = {
-      "prop01":"test",
-      "prop03": 1,
-      "prop04": False
+      "prop02":"blah"
     }
     
     try:
