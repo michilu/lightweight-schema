@@ -6,22 +6,17 @@ import jsonschema
 class TestProperties(TestCase):
   props = {
     "prop01": {"type":"string"},
-    "prop02": {"type":"number", "optional":False},
+    "prop02": {"type":"number", "optional":True},
     "prop03": {"type":"integer"},
     "prop04": {"type":"boolean"},
     "prop05": {
       "type":"object",
+      "optional":True,
       "properties": {
         "subprop01":{"type":"string"},
         "subprop02":{"type":"string", "optional":False}
       }
-    },
-    "prop06": {
-      "type": "array",
-      "items": {"type":"integer"}
-    },
-    "prop07": {"type":"null"},
-    "prop08": {"type":"any"}
+    }
   }
   schema = {"type": "object", "properties":props}
   
@@ -30,6 +25,8 @@ class TestProperties(TestCase):
     data = {
       "prop01": "test",
       "prop02": 1.20,
+      "prop03": 1,
+      "prop04": True,
       "prop05": {
         "subprop01":"test",
         "subprop02":"test2",
@@ -44,7 +41,10 @@ class TestProperties(TestCase):
   def test_properties2(self):
     
     data = {
-      "prop02":1.50
+      "prop01": "test",
+      "prop02": 1.20,
+      "prop03": 1,
+      "prop04": True
     }
     
     try:
