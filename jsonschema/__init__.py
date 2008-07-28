@@ -65,10 +65,12 @@ Length of 'simplejson' must be more than 15.000000
 
 from validator import JSONSchemaValidator
 
-def validate(data, schema):
+def validate(data, schema, validator_cls=None):
   '''Validates a parsed json document against the provided schema'''
-  validator = JSONSchemaValidator()
-  return validator.validate(data,schema)
+  if validator_cls == None:
+    validator_cls = JSONSchemaValidator
+  v = validator_cls()
+  return v.validate(data,schema)
 
 __all__ = [ 'validate', 'JSONSchemaValidator' ]
 __version__ = '0.1a'
