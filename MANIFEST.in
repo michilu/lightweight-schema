@@ -1,4 +1,4 @@
 include *.txt
 include ez_setup.py
-recursive-include examples *.txt *.py
+recursive-include examples *.txt *.py *.js
 prune examples/sample?/build
