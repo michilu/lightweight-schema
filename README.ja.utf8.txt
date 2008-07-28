@@ -1,14 +1,15 @@
 紹介
 
 jsonschema はJSON文書がJSON Schema文書構造に従ってるかどうかを検証する
-ライブラリです。JSON Schema Proposal Second Draftを仕様として基にされています。
-JSON Schema Proposal Second Draft は以下のURLで参照することができます。
+ライブラリです。ライブラリです。JSON Schema Proposal Second Draftの仕様を
+基にしています。JSON Schema Proposal Second Draft は以下のURLで参照する
+ことができます。
 
 http://groups.google.com/group/json-schema/web/json-schema-proposal---second-draft
 
 インストール
 
-jsonschemaはsetuptoolsを使っていますので、adminユーザとして、以下のコマンドで
+jsonschemaはsetuptoolsを使っているので、adminユーザとして、以下のコマンドで
 簡単にインストールすることが出来ます。
 
 python setup.py install
@@ -56,7 +57,7 @@ Dictオブジェクトに解析しないといけません。自分が好きな�
 
 検証エラーを処理
 
-検証エラーが発生する際に、ValueErrorと言う例外を上げる。
+検証エラーが発生する場合は、ValueErrorと言う例外が起こります。
 
 >>> import jsonschema
 >>> try:
@@ -68,7 +69,7 @@ Length of 'simplejson' must be more than 15.000000
 
 jsonschemaを拡張
 
-simplejsonみたいにjsonschemaは拡張できるAPIが提供されています。
+simplejsonの様にjsonschemaは拡張できるAPIが提供されています。
 JSONSchemaValidatorと言うクラスを拡張すれば、JSON Schema プロパティや、
 データ形式を追加することができます。examplesにある例を見てください。
 
