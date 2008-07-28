@@ -3,14 +3,14 @@
 #:tabSize=2:indentSize=2:noTabs=true:
 #:folding=explicit:collapseFolds=1:
 
-import re
-import simplejson
-import jsonschema
+import re, simplejson, types, jsonschema
 from jsonschema.validator import JSONSchemaValidator
 
 class FunctionValidator(JSONSchemaValidator):
   '''FunctionValidator extends the JSONSchemaValidator to support Javascript
-     functions within JSON schema'''
+     functions within JSON schema. This class demonstrates how to extend
+     JSONSchema and the Validator to add types and JSONSchema properties
+     to be validated.'''
   def validate_type(self, x, fieldname, schema, fieldtype=None):
     '''Performs very simple validation on the value of the function property to
        make sure it is a Javascript function'''
@@ -23,6 +23,12 @@ class FunctionValidator(JSONSchemaValidator):
         return x
     else:
       JSONSchemaValidator.validate_type(self, x, fieldname, schema, fieldtype)
+
+  def validate_class(self, x, fieldname, schema, classname=None):
+    if classname is not None and \
+    not isinstance(classname, types.StringType) and \
+    not isinstance(classname, types.UnicodeType):
+      raise ValueError("The classname %s must be a string" % repr(classname));
 
 def main():
   import sys

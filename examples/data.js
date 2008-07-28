@@ -1,4 +1,4 @@
 {
   "name": "Hello World Example Function",
-  "userfunc": "faunction() { alert(\"Hello World!\"); }"
+  "userfunc": "function() { alert(\"Hello World!\"); }"
 }
