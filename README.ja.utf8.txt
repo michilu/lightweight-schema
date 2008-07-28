@@ -73,7 +73,7 @@ simplejsonの様にjsonschemaは拡張できるAPIが提供されています。
 JSONSchemaValidatorと言うクラスを拡張すれば、JSON Schema プロパティや、
 データ形式を追加することができます。examplesにある例を見てください。
 
-TODO
+未実装
 
 スキーマリファレンスには対応していません。
 unique というプロパティには対応していません。
