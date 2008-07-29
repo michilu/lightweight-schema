@@ -129,7 +129,7 @@ class JSONSchemaValidator:
                 try:
                   self.validate(value[itemIndex], items[itemIndex])
                 except ValueError, e:
-                  raise ValueError("Failed to validate list schema: %s" % (fieldname, repr(e.message)))
+                  raise ValueError("Failed to validate %s list schema: %s" % (fieldname, repr(e.message)))
             else:
               raise ValueError("Length of list %s is not equal to length of schema list" % repr(value))
           elif isinstance(items, types.DictType):
