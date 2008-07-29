@@ -251,7 +251,8 @@ class JSONSchemaValidator:
        option values if specified'''
     value = x.get(fieldname)
     if options is not None and value is not None:
-      if isinstance(options, types.ListType):
+      print repr(options)
+      if not isinstance(options, types.ListType):
         raise ValueError("Enumeration for field '%s' is not a list type", fieldname)
       if value not in options:
         raise ValueError("Value %s is not in the enumeration: %s" % value, repr(options))
