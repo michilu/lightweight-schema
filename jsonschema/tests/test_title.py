@@ -18,7 +18,7 @@ class TestTitle(TestCase):
     except ValueError, e:
       self.fail("Unexpected failure: %s" % e)
   
-  def test_title_pass(self):
+  def test_title_fail(self):
     
     #It shouldn't matter what this data is
     data = "whatever"
