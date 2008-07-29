@@ -63,7 +63,10 @@ Length of 'simplejson' must be more than 15.000000
 #      encoding using the "python -m<modulename>" format.
 #TODO: Support encodings other than utf-8
 
-from validator import JSONSchemaValidator
+from jsonschema.validator import JSONSchemaValidator
+
+__all__ = [ 'validate', 'JSONSchemaValidator' ]
+__version__ = '0.1a'
 
 def validate(data, schema, validator_cls=None):
   '''Validates a parsed json document against the provided schema'''
@@ -72,5 +75,23 @@ def validate(data, schema, validator_cls=None):
   v = validator_cls()
   return v.validate(data,schema)
 
-__all__ = [ 'validate', 'JSONSchemaValidator' ]
-__version__ = '0.1a'
+if __name__ == '__main__':
+  import sys, simplejson
+  if len(sys.argv) == 1:
+    raise SystemExit("%s [schemafile [infile]]" % (sys.argv[0],))
+  elif len(sys.argv) == 2:
+    if sys.argv[1] == "--help":
+      raise SystemExit("%s [schemafile [infile]]" % (sys.argv[0],))
+    schemafile = open(sys.argv[1], 'rb')
+    infile = sys.stdin
+  elif len(sys.argv) == 3:
+    schemafile = open(sys.argv[1], 'rb')
+    infile = open(sys.argv[2], 'rb')
+  else:
+    raise SystemExit("%s [schemafile [infile]]" % (sys.argv[0],))
+  try:
+    obj = simplejson.load(infile)
+    schema = simplejson.load(schemafile)
+    validate(obj, schema)
+  except ValueError, e:
+    raise SystemExit(e)
