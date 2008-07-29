@@ -24,13 +24,14 @@ from setuptools import setup, find_packages
 VERSION = "0.1a"
 DESCRIPTION = "json-schema validator for Python"
 LONG_DESCRIPTION = """
-jsonschema is a complete, full featured validator for json-schema adhering to
-the json-schema proposal second draft
+jsonschema is a complete, full featured validator for json-schema
+adhering to the json-schema proposal second draft.
 <http://groups.google.com/group/json-schema/web/json-schema-proposal---second-draft>.
+
 jsonschema is written in pure python and currently has no dependencies.
 
-Validators may be subclassed much like simplejson encoders to provide special
-functionality or extensions.
+Validators may be subclassed much like simplejson encoders to provide
+special functionality or extensions.
 
 jsonschema currently supports ascii and utf-8 json and schema documents.
 """
