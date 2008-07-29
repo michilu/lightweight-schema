@@ -7,7 +7,7 @@ from unittest import TestCase
 
 import jsonschema
 
-class TestProperties(TestCase):
+class TestItems(TestCase):
   
   schema1 = {
     "type": "array", 
