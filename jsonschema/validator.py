@@ -92,14 +92,14 @@ class JSONSchemaValidator:
           except ValueError:
             pass
         if not datavalid:
-          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
+          raise ValueError("Value %r is not of type %r" % (value, fieldtype))
       else:
         # isinstance(True, types.IntType) returns true so we need to write a
         # workaround
         if converted_fieldtype == types.IntType and isinstance(value,types.BooleanType):
-          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
+          raise ValueError("Value %r is not of type %r" % (value, fieldtype))
         elif not isinstance(value, converted_fieldtype):
-          raise ValueError("Value %s is not of type %s" % (repr(value), repr(fieldtype)))
+          raise ValueError("Value %r is not of type %r" % (value, fieldtype))
     return x
   
   def validate_properties(self, x, fieldname, schema, properties=None):
@@ -129,9 +129,9 @@ class JSONSchemaValidator:
                 try:
                   self.validate(value[itemIndex], items[itemIndex])
                 except ValueError, e:
-                  raise ValueError("Failed to validate %s list schema: %s" % (fieldname, repr(e.message)))
+                  raise ValueError("Failed to validate %s list schema: %r" % (fieldname, e.message))
             else:
-              raise ValueError("Length of list %s is not equal to length of schema list" % repr(value))
+              raise ValueError("Length of list %r is not equal to length of schema list" % value)
           elif isinstance(items, types.DictType):
             for eachItem in value:
                 try:
@@ -139,7 +139,7 @@ class JSONSchemaValidator:
                   # print repr(items)
                   self._validate(eachItem, items)
                 except ValueError, e:
-                  raise ValueError("Failed to validate %s list schema: %s" % (fieldname, repr(e.message)))
+                  raise ValueError("Failed to validate %s list schema: %r" % (fieldname, e.message))
           else:
             raise ValueError("Properties definition of %s is not a list or an object" % fieldname)
     return x
@@ -254,7 +254,7 @@ class JSONSchemaValidator:
       if not isinstance(options, types.ListType):
         raise ValueError("Enumeration for field '%s' is not a list type", fieldname)
       if value not in options:
-        raise ValueError("Value %s is not in the enumeration: %s" % (value, repr(options)))
+        raise ValueError("Value %s is not in the enumeration: %r" % (value, options))
     return x
   
   def validate_options(self, x, fieldname, schema, options=None):
