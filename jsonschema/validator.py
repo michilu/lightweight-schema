@@ -151,7 +151,32 @@ class JSONSchemaValidator:
       raise ValueError("Required field %s is missing" % fieldname)
     return x
   
-  def validate_additionalProperties(self, x, fieldname, schema, properties=None):
+  def validate_additionalProperties(self, x, fieldname, schema, additionalProperties=None):
+    '''Validates additional properties of a JSON object that were not
+       specifically defined by the properties property'''
+    if additionalProperties is not None and x.get(fieldname) is not None:
+      # If additionalProperties is the boolean value True then we accept any
+      # additional properties.
+      if isinstance(additionalProperties, types.BooleanType) and additionalProperties == True:
+        return x
+      
+      value = x.get(fieldname)
+      if value is not None:
+        if isinstance(value, types.DictType):
+          if isinstance(additionalProperties, types.DictType) \
+           or isinstance(additionalProperties, types.BooleanType):
+            properties = schema.get("properties")
+            if properties is None:
+              properties = {}
+            for eachProperty in value.keys():
+              if eachProperty not in properties:
+                # If additionalProperties is the boolean value False then we 
+                # don't accept any additional properties.
+                if isinstance(additionalProperties, types.BooleanType) and additionalProperties == False:
+                  raise ValueError("Additional properties not defined by the 'properties' property are not allowed in %s" % fieldname)
+                self.__validate(eachProperty, value, additionalProperties)
+          else:
+            raise ValueError("additionalProperties schema definition for %s is not an object" % fieldname)
     return x
   
   def validate_requires(self, x, fieldname, schema, requires=None):
@@ -364,10 +389,10 @@ class JSONSchemaValidator:
         
         try:
           validator = getattr(self, validatorname)
-          validator(data,fieldname, schema, schema.get(schemaprop))
+          validator(data, fieldname, schema, schema.get(schemaprop))
         except AttributeError, e:
           raise ValueError("Schema property %s is not supported" % schemaprop)
-          
+      
       # if isinstance(data, types.DictType) and schematype:
       #   # recurse!
       #   for key in schematype.keys():
