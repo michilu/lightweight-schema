@@ -9,8 +9,10 @@
 import types, sys, re, copy
 
 class JSONSchemaValidator:
-  '''Implementation of the json-schema validator that adheres to the 
-     JSON Schema Proposal 2nd Draft'''
+  '''
+  Implementation of the json-schema validator that adheres to the 
+  JSON Schema Proposal 2nd Draft.
+  '''
   
   # Map of schema types to their equivalent in the python types module
   _typesmap = {
@@ -63,7 +65,9 @@ class JSONSchemaValidator:
     self._interactive_mode = interactive_mode
   
   def validate_id(self, x, fieldname, schema, ID=None):
-    '''Validates a schema id and adds it to the schema reference map'''
+    '''
+    Validates a schema id and adds it to the schema reference map
+    '''
     if ID is not None:
       if ID == "$":
         raise ValueError("Reference id for field '%s' cannot equal '$'" % fieldname)
@@ -71,8 +75,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_type(self, x, fieldname, schema, fieldtype=None):
-    '''Validates that the fieldtype specified is correct for the given
-       data'''
+    '''
+    Validates that the fieldtype specified is correct for the given
+    data
+    '''
     
     converted_fieldtype = self._convert_type(fieldtype)
     
@@ -108,8 +114,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_properties(self, x, fieldname, schema, properties=None):
-    '''Validates properties of a JSON object by processing the object's schema
-       recursively'''
+    '''
+    Validates properties of a JSON object by processing the object's
+    schema recursively
+    '''
     if properties is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -122,8 +130,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_items(self, x, fieldname, schema, items=None):
-    '''Validates that all items in the list for the given field match the given
-       schema'''
+    '''
+    Validates that all items in the list for the given field match the
+    given schema
+    '''
     if items is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -150,15 +160,19 @@ class JSONSchemaValidator:
     return x
   
   def validate_optional(self, x, fieldname, schema, optional=False):
-    '''Validates that the given field is present if optional is false'''
+    '''
+    Validates that the given field is present if optional is false
+    '''
     # Make sure the field is present
     if fieldname not in x.keys() and not optional:
       raise ValueError("Required field '%s' is missing" % fieldname)
     return x
   
   def validate_additionalProperties(self, x, fieldname, schema, additionalProperties=None):
-    '''Validates additional properties of a JSON object that were not
-       specifically defined by the properties property'''
+    '''
+    Validates additional properties of a JSON object that were not
+    specifically defined by the properties property
+    '''
     if additionalProperties is not None:
       # If additionalProperties is the boolean value True then we accept any
       # additional properties.
@@ -189,7 +203,9 @@ class JSONSchemaValidator:
     return x
   
   def validate_unique(self, x, fieldname, schema, unique=False):
-    '''Validates that the given field is unique in the instance object tree'''
+    '''
+    Validates that the given field is unique in the instance object tree
+    '''
     # TODO: Support unique values
     # TODO: What does it mean to be unique in the object tree? If a child node
     #       is marked unique does that mean that parent nodes need to be checked
@@ -197,8 +213,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_minimum(self, x, fieldname, schema, minimum=None):
-    '''Validates that the field is longer than or equal to the minimum length if
-       specified'''
+    '''
+    Validates that the field is longer than or equal to the minimum
+    length if specified
+    '''
     if minimum is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -209,8 +227,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_maximum(self, x, fieldname, schema, maximum=None):
-    '''Validates that the field is shorter than or equal to the maximum length
-       if specified'''
+    '''
+    Validates that the field is shorter than or equal to the maximum
+    length if specified.
+    '''
     if maximum is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -221,8 +241,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_minItems(self, x, fieldname, schema, minitems=None):
-    '''Validates that the number of items in the given field is equal to or
-       more than the minimum amount'''
+    '''
+    Validates that the number of items in the given field is equal to or
+    more than the minimum amount.
+    '''
     if minitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -231,8 +253,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_maxItems(self, x, fieldname, schema, maxitems=None):
-    '''Validates that the number of items in the given field is equal to or
-       less than the maximum amount'''
+    '''
+    Validates that the number of items in the given field is equal to or
+    less than the maximum amount.
+    '''
     if maxitems is not None and x.get(fieldname) is not None:
       value = x.get(fieldname)
       if value is not None:
@@ -241,8 +265,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_pattern(self, x, fieldname, schema, pattern=None):
-    '''Validates that the given field, if a string, matches the given regular
-       expression.'''
+    '''
+    Validates that the given field, if a string, matches the given
+    regular expression.
+    '''
     value = x.get(fieldname)
     if pattern is not None and \
        value is not None and \
@@ -253,8 +279,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_maxLength(self, x, fieldname, schema, length=None):
-    '''Validates that the value of the given field is shorter than or equal to
-       the specified length if a string'''
+    '''
+    Validates that the value of the given field is shorter than or equal
+    to the specified length if a string
+    '''
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
@@ -264,8 +292,10 @@ class JSONSchemaValidator:
     return x
     
   def validate_minLength(self, x, fieldname, schema, length=None):
-    '''Validates that the value of the given field is longer than or equal to
-       the specified length if a string'''
+    '''
+    Validates that the value of the given field is longer than or equal
+    to the specified length if a string
+    '''
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
@@ -275,8 +305,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_enum(self, x, fieldname, schema, options=None):
-    '''Validates that the value of the field is equal to one of the specified
-       option values if specified'''
+    '''
+    Validates that the value of the field is equal to one of the
+    specified option values
+    '''
     value = x.get(fieldname)
     if options is not None and value is not None:
       if not isinstance(options, types.ListType):
@@ -304,14 +336,18 @@ class JSONSchemaValidator:
     return x
   
   def validate_format(self, x, fieldname, schema, format=None):
-    '''Validates that the value of the field matches the predifined format
-       specified.'''
+    '''
+    Validates that the value of the field matches the predifined format
+    specified.
+    '''
     # No definitions are currently defined for formats
     return x
   
   def validate_default(self, x, fieldname, schema, default=None):
-    '''Adds default data to the original json document if the document is
-       not readonly'''
+    '''
+    Adds default data to the original json document if the document is
+    not readonly
+    '''
     if self._interactive_mode and fieldname not in x.keys() and default is not None:
       if not schema.get("readonly"):
         x[fieldname] = default
@@ -321,8 +357,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_maxDecimal(self, x, fieldname, schema, maxdecimal=None):
-    '''Validates that the value of the given field has less than or equal to
-       the maximum number of decimal places given'''
+    '''
+    Validates that the value of the given field has less than or equal
+    to the maximum number of decimal places given
+    '''
     value = x.get(fieldname)
     if maxdecimal is not None and value is not None:
       maxdecstring = str(value)
@@ -334,8 +372,10 @@ class JSONSchemaValidator:
     return x
   
   def validate_disallow(self, x, fieldname, schema, disallow=None):
-    '''Validates that the value of the given field does not match the disallowed
-       type.'''
+    '''
+    Validates that the value of the given field does not match the
+    disallowed type.
+    '''
     if disallow is not None:
       try:
         self.validate_type(x, fieldname, schema, disallow)
@@ -365,7 +405,9 @@ class JSONSchemaValidator:
         raise ValueError("Field type '%s' is not supported." % fieldtype)
   
   def validate(self, data, schema):
-    '''Validates a piece of json data against the provided json-schema.'''
+    '''
+    Validates a piece of json data against the provided json-schema.
+    '''
     
     #TODO: Validate the schema object here.
     
