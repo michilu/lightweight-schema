@@ -53,7 +53,7 @@ ValueErrors are thrown when validation errors occur.
 ... except ValueError, e:
 ...     print e.message
 ... 
-Length of 'simplejson' must be more than 15.000000
+Length of value 'simplejson' for field '_data' must be more than or equal to 15.000000
 
 '''
 
