@@ -241,7 +241,7 @@ class JSONSchemaValidator:
     value = x.get(fieldname)
     if pattern is not None and \
        value is not None and \
-       isinstance(value, types.StringType):
+       self._is_string_type(value):
       p = re.compile(pattern)
       if not p.match(value):
         raise ValueError("Value %r for field '%s' does not match regular expression '%s'" % (value, fieldname, pattern))
@@ -253,7 +253,7 @@ class JSONSchemaValidator:
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
-       isinstance(value, types.StringType) and \
+       self._is_string_type(value) and \
        len(value) > length:
       raise ValueError("Length of value %r for field '%s' must be less than or equal to %f" % (value, fieldname, length))
     return x
@@ -264,7 +264,7 @@ class JSONSchemaValidator:
     value = x.get(fieldname)
     if length is not None and \
        value is not None and \
-       isinstance(value, types.StringType) and \
+       self._is_string_type(value) and \
        len(value) < length:
       raise ValueError("Length of value %r for field '%s' must be more than or equal to %f" % (value, fieldname, length))
     return x
@@ -288,13 +288,13 @@ class JSONSchemaValidator:
   
   def validate_title(self, x, fieldname, schema, title=None):
     if title is not None and \
-       not isinstance(title, types.StringType):
+       not self._is_string_type(title):
       raise ValueError("The title for field '%s' must be a string" % fieldname);
     return x
   
   def validate_description(self, x, fieldname, schema, description=None):
     if description is not None and \
-       not isinstance(description, types.StringType):
+       not self._is_string_type(description):
       raise ValueError("The description for field '%s' must be a string." % fieldname);
     return x
   
@@ -399,5 +399,8 @@ class JSONSchemaValidator:
       #     _validate(key, realdata, schematype)
           
     return data
-
+  
+  def _is_string_type(self, value):
+    return isinstance(value, types.StringType) or isinstance(value, types.UnicodeType)
+  
 __all__ = [ 'JSONSchemaValidator' ]
