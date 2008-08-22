@@ -57,6 +57,11 @@ class JSONSchemaValidator:
   
   _refmap = {}
   
+  _interactive_mode = True
+  
+  def __init__(self, interactive_mode=True):
+    self._interactive_mode = interactive_mode
+  
   def validate_id(self, x, fieldname, schema, ID=None):
     '''Validates a schema id and adds it to the schema reference map'''
     if ID is not None:
@@ -307,7 +312,7 @@ class JSONSchemaValidator:
   def validate_default(self, x, fieldname, schema, default=None):
     '''Adds default data to the original json document if the document is
        not readonly'''
-    if fieldname not in x.keys() and default is not None:
+    if self._interactive_mode and fieldname not in x.keys() and default is not None:
       if not schema.get("readonly"):
         x[fieldname] = default
     return x

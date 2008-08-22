@@ -68,11 +68,11 @@ from jsonschema.validator import JSONSchemaValidator
 __all__ = [ 'validate', 'JSONSchemaValidator' ]
 __version__ = '0.1a'
 
-def validate(data, schema, validator_cls=None):
+def validate(data, schema, validator_cls=None, interactive_mode=True):
   '''Validates a parsed json document against the provided schema'''
   if validator_cls == None:
     validator_cls = JSONSchemaValidator
-  v = validator_cls()
+  v = validator_cls(interactive_mode)
   return v.validate(data,schema)
 
 if __name__ == '__main__':
