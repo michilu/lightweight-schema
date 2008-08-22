@@ -5,8 +5,6 @@
 
 #TODO: Support references
 #TODO: Support inline schema
-#TODO: Support adding default values to the original json document if they
-#      aren't present.
 
 import types, sys, re, copy
 
@@ -381,7 +379,7 @@ class JSONSchemaValidator:
       if not isinstance(schema, types.DictType):
         raise ValueError("Schema structure is invalid.");
       
-      # Produce a deep copy of the schema object since we will make changes to
+      # Produce a copy of the schema object since we will make changes to
       # it to process default values. Deep copy is not necessary since we will
       # produce a copy of sub items on the next recursive call.
       
@@ -392,7 +390,7 @@ class JSONSchemaValidator:
           new_schema[schemaprop] = self._schemadefault[schemaprop]
       
       for schemaprop in new_schema:
-        # print schemaprop
+        
         validatorname = "validate_"+schemaprop
         
         try:
@@ -403,13 +401,6 @@ class JSONSchemaValidator:
         except AttributeError, e:
           raise ValueError("Schema property '%s' is not supported" % schemaprop)
       
-      # if isinstance(data, types.DictType) and schematype:
-      #   # recurse!
-      #   for key in schematype.keys():
-      #     # get the data itself
-      #     realdata = data.get(fieldname)
-      #     _validate(key, realdata, schematype)
-    
     return data
   
   def _is_string_type(self, value):
