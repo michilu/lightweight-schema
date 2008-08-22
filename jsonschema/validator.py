@@ -8,7 +8,7 @@
 #TODO: Support adding default values to the original json document if they
 #      aren't present.
 
-import types, sys, re
+import types, sys, re, copy
 
 class JSONSchemaValidator:
   '''Implementation of the json-schema validator that adheres to the 
@@ -62,6 +62,8 @@ class JSONSchemaValidator:
   def validate_id(self, x, fieldname, schema, ID=None):
     '''Validates a schema id and adds it to the schema reference map'''
     if ID is not None:
+      if ID == "$":
+        raise ValueError("Reference id for field '%s' cannot equal '$'" % fieldname)
       self._refmap[ID] = schema
     return x
   
@@ -364,7 +366,9 @@ class JSONSchemaValidator:
     
     #TODO: Validate the schema object here.
     
-    self._refmap = {}
+    self._refmap = {
+      '$': schema
+    }
     # Wrap the data in a dictionary
     self._validate(data, schema)
   
@@ -372,22 +376,30 @@ class JSONSchemaValidator:
     self.__validate("_data", {"_data": data}, schema)
   
   def __validate(self, fieldname, data, schema):
-    #TODO: Should fields that are not specified in the schema be allowed?
-    #      Allowing them for now.
+    
     if schema is not None:
+      if not isinstance(schema, types.DictType):
+        raise ValueError("Schema structure is invalid.");
       
+      # Produce a deep copy of the schema object since we will make changes to
+      # it to process default values. Deep copy is not necessary since we will
+      # produce a copy of sub items on the next recursive call.
+      
+      new_schema = copy.copy(schema)
       #Initialize defaults
       for schemaprop in self._schemadefault.keys():
-        if schemaprop not in schema:
-          schema[schemaprop] = self._schemadefault[schemaprop]
+        if schemaprop not in new_schema:
+          new_schema[schemaprop] = self._schemadefault[schemaprop]
       
-      for schemaprop in schema:
+      for schemaprop in new_schema:
         # print schemaprop
         validatorname = "validate_"+schemaprop
         
         try:
           validator = getattr(self, validatorname)
-          validator(data, fieldname, schema, schema.get(schemaprop))
+          # Pass the original schema object but the value of the property from
+          # copy in order to validate default values.
+          validator(data, fieldname, schema, new_schema.get(schemaprop))
         except AttributeError, e:
           raise ValueError("Schema property '%s' is not supported" % schemaprop)
       
@@ -397,7 +409,7 @@ class JSONSchemaValidator:
       #     # get the data itself
       #     realdata = data.get(fieldname)
       #     _validate(key, realdata, schematype)
-          
+    
     return data
   
   def _is_string_type(self, value):
