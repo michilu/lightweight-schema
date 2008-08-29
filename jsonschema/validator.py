@@ -35,7 +35,7 @@ class JSONSchemaValidator:
     "optional": False,
     "additionalProperties": None,
     "requires": None,
-    "unique": False,
+    "identity": None,
     "minimum": None,
     "maximum": None,
     "minItems": None,
@@ -202,14 +202,7 @@ class JSONSchemaValidator:
         raise ValueError("Field '%s' is required by field '%s'" % (requires, fieldname))
     return x
   
-  def validate_unique(self, x, fieldname, schema, unique=False):
-    '''
-    Validates that the given field is unique in the instance object tree
-    '''
-    # TODO: Support unique values
-    # TODO: What does it mean to be unique in the object tree? If a child node
-    #       is marked unique does that mean that parent nodes need to be checked
-    #       for uniqueness?
+  def validate_identity(self, x, fieldname, schema, unique=False):
     return x
   
   def validate_minimum(self, x, fieldname, schema, minimum=None):
