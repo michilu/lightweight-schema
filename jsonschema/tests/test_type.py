@@ -8,6 +8,32 @@ from unittest import TestCase
 import jsonschema
 
 class TestType(TestCase):
+    
+    def test_schema(self):
+      schema = { 
+        "type": [
+          { "type": "array",  "minItems": 10 },
+          { "type": "string", "pattern": "^0+$" } 
+        ]
+      }
+      
+      data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      data2 = "0";
+      data3 = 1203;
+      
+      for x in [data1, data2]:
+        try:
+          jsonschema.validate(x, schema)
+        except ValueError, e:
+          self.fail("Unexpected failure: %s" % e)
+      
+      try:
+        jsonschema.validate(data3, schema)
+      except ValueError:
+        pass
+      else:
+        self.fail("Expected failure for %s" % repr(x))
+      
     def test_integer(self):
       for x in [1, 89, 48, 32, 49, 42]:
         try:

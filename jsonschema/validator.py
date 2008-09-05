@@ -104,6 +104,11 @@ class JSONSchemaValidator:
             pass
         if not datavalid:
           raise ValueError("Value %r for field '%s' is not of type %r" % (value, fieldname, fieldtype))
+      elif isinstance(converted_fieldtype, types.DictType):
+        try:
+          self.__validate(fieldname, x, converted_fieldtype)
+        except ValueError,e:
+          raise e
       else:
         # isinstance(True, types.IntType) returns true so we need to write a
         # workaround
@@ -150,8 +155,6 @@ class JSONSchemaValidator:
           elif isinstance(items, types.DictType):
             for eachItem in value:
                 try:
-                  # print eachItem
-                  # print repr(items)
                   self._validate(eachItem, items)
                 except ValueError, e:
                   raise ValueError("Failed to validate field '%s' list schema: %r" % (fieldname, e.message))
@@ -381,7 +384,7 @@ class JSONSchemaValidator:
     return x
   
   def _convert_type(self, fieldtype):
-    if isinstance(fieldtype, types.TypeType):
+    if type(fieldtype) in (types.TypeType, types.DictType):
       return fieldtype
     elif isinstance(fieldtype, types.ListType):
       converted_fields = []
