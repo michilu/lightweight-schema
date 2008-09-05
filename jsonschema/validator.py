@@ -110,11 +110,7 @@ class JSONSchemaValidator:
         except ValueError,e:
           raise e
       else:
-        # isinstance(True, types.IntType) returns true so we need to write a
-        # workaround
-        if converted_fieldtype == types.IntType and isinstance(value,types.BooleanType):
-          raise ValueError("Value %r for field '%s' is not of type %r" % (value, fieldname, fieldtype))
-        elif not isinstance(value, converted_fieldtype):
+        if type(value) != converted_fieldtype:
           raise ValueError("Value %r for field '%s' is not of type %r" % (value, fieldname, fieldtype))
     return x
   
