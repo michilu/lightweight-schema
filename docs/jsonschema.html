@@ -58,7 +58,15 @@ ValueErrors&nbsp;are&nbsp;thrown&nbsp;when&nbsp;validation&nbsp;errors&nbsp;occu
 ...&nbsp;except&nbsp;ValueError,&nbsp;e:<br>
 ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;e.message<br>
 ...&nbsp;<br>
-Length&nbsp;of&nbsp;'simplejson'&nbsp;must&nbsp;be&nbsp;more&nbsp;than&nbsp;15.000000</tt></p>
+Length&nbsp;of&nbsp;value&nbsp;'simplejson'&nbsp;for&nbsp;field&nbsp;'_data'&nbsp;must&nbsp;be&nbsp;more&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;15.000000<br>
+&nbsp;<br>
+Running&nbsp;from&nbsp;the&nbsp;command&nbsp;line<br>
+&nbsp;<br>
+%&nbsp;echo&nbsp;'{"type":"string"}'&nbsp;&gt;&nbsp;schema.json<br>
+%&nbsp;echo&nbsp;'"mystring"'&nbsp;|&nbsp;python&nbsp;-mjsonschema&nbsp;schema.json<br>
+&nbsp;<br>
+%&nbsp;echo&nbsp;'"mystring"'&nbsp;&gt;&nbsp;data.json<br>
+%&nbsp;python&nbsp;-mjsonschema&nbsp;schema.json&nbsp;data.json</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -86,23 +94,26 @@ Length&nbsp;of&nbsp;'simplejson'&nbsp;must&nbsp;be&nbsp;more&nbsp;than&nbsp;15.0
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Implementation&nbsp;of&nbsp;the&nbsp;json-schema&nbsp;validator&nbsp;that&nbsp;adheres&nbsp;to&nbsp;the&nbsp;<br>
-JSON&nbsp;Schema&nbsp;Proposal&nbsp;2nd&nbsp;Draft<br>&nbsp;</tt></td></tr>
+JSON&nbsp;Schema&nbsp;Proposal&nbsp;2nd&nbsp;Draft.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
+<dl><dt><a name="JSONSchemaValidator-__init__"><strong>__init__</strong></a>(self, interactive_mode<font color="#909090">=True</font>)</dt></dl>
+
 <dl><dt><a name="JSONSchemaValidator-validate"><strong>validate</strong></a>(self, data, schema)</dt><dd><tt>Validates&nbsp;a&nbsp;piece&nbsp;of&nbsp;json&nbsp;data&nbsp;against&nbsp;the&nbsp;provided&nbsp;json-schema.</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_additionalProperties"><strong>validate_additionalProperties</strong></a>(self, x, fieldname, schema, properties<font color="#909090">=None</font>)</dt></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_additionalProperties"><strong>validate_additionalProperties</strong></a>(self, x, fieldname, schema, additionalProperties<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;additional&nbsp;properties&nbsp;of&nbsp;a&nbsp;JSON&nbsp;object&nbsp;that&nbsp;were&nbsp;not<br>
+specifically&nbsp;defined&nbsp;by&nbsp;the&nbsp;properties&nbsp;property</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_default"><strong>validate_default</strong></a>(self, x, fieldname, schema, default<font color="#909090">=None</font>)</dt><dd><tt>Adds&nbsp;default&nbsp;data&nbsp;to&nbsp;the&nbsp;original&nbsp;json&nbsp;document&nbsp;if&nbsp;the&nbsp;document&nbsp;is<br>
 not&nbsp;readonly</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_description"><strong>validate_description</strong></a>(self, x, fieldname, schema, description<font color="#909090">=None</font>)</dt></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_disallow"><strong>validate_disallow</strong></a>(self, x, fieldname, schema, disallow<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;does&nbsp;not&nbsp;match&nbsp;the&nbsp;disallowed<br>
-type.</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_disallow"><strong>validate_disallow</strong></a>(self, x, fieldname, schema, disallow<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;does&nbsp;not&nbsp;match&nbsp;the<br>
+disallowed&nbsp;type.</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_enum"><strong>validate_enum</strong></a>(self, x, fieldname, schema, options<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;field&nbsp;is&nbsp;equal&nbsp;to&nbsp;one&nbsp;of&nbsp;the&nbsp;specified<br>
-option&nbsp;values&nbsp;if&nbsp;specified</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_enum"><strong>validate_enum</strong></a>(self, x, fieldname, schema, options<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;field&nbsp;is&nbsp;equal&nbsp;to&nbsp;one&nbsp;of&nbsp;the<br>
+specified&nbsp;option&nbsp;values</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_extends"><strong>validate_extends</strong></a>(self, x, fieldname, schema, extends<font color="#909090">=None</font>)</dt></dl>
 
@@ -113,39 +124,41 @@ specified.</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_id"><strong>validate_id</strong></a>(self, x, fieldname, schema, ID<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;a&nbsp;schema&nbsp;id&nbsp;and&nbsp;adds&nbsp;it&nbsp;to&nbsp;the&nbsp;schema&nbsp;reference&nbsp;map</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_items"><strong>validate_items</strong></a>(self, x, fieldname, schema, items<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;all&nbsp;items&nbsp;in&nbsp;the&nbsp;list&nbsp;for&nbsp;the&nbsp;given&nbsp;field&nbsp;match&nbsp;the&nbsp;given<br>
-schema</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_identity"><strong>validate_identity</strong></a>(self, x, fieldname, schema, unique<font color="#909090">=False</font>)</dt></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_maxDecimal"><strong>validate_maxDecimal</strong></a>(self, x, fieldname, schema, maxdecimal<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;has&nbsp;less&nbsp;than&nbsp;or&nbsp;equal&nbsp;to<br>
-the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;decimal&nbsp;places&nbsp;given</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_items"><strong>validate_items</strong></a>(self, x, fieldname, schema, items<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;all&nbsp;items&nbsp;in&nbsp;the&nbsp;list&nbsp;for&nbsp;the&nbsp;given&nbsp;field&nbsp;match&nbsp;the<br>
+given&nbsp;schema</tt></dd></dl>
+
+<dl><dt><a name="JSONSchemaValidator-validate_maxDecimal"><strong>validate_maxDecimal</strong></a>(self, x, fieldname, schema, maxdecimal<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;has&nbsp;less&nbsp;than&nbsp;or&nbsp;equal<br>
+to&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;decimal&nbsp;places&nbsp;given</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_maxItems"><strong>validate_maxItems</strong></a>(self, x, fieldname, schema, maxitems<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;equal&nbsp;to&nbsp;or<br>
-less&nbsp;than&nbsp;the&nbsp;maximum&nbsp;amount</tt></dd></dl>
+less&nbsp;than&nbsp;the&nbsp;maximum&nbsp;amount.</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_maxLength"><strong>validate_maxLength</strong></a>(self, x, fieldname, schema, length<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;shorter&nbsp;than&nbsp;or&nbsp;equal&nbsp;to<br>
-the&nbsp;specified&nbsp;length&nbsp;if&nbsp;a&nbsp;string</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_maxLength"><strong>validate_maxLength</strong></a>(self, x, fieldname, schema, length<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;shorter&nbsp;than&nbsp;or&nbsp;equal<br>
+to&nbsp;the&nbsp;specified&nbsp;length&nbsp;if&nbsp;a&nbsp;string</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_maximum"><strong>validate_maximum</strong></a>(self, x, fieldname, schema, maximum<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;field&nbsp;is&nbsp;shorter&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;maximum&nbsp;length<br>
-if&nbsp;specified</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_maximum"><strong>validate_maximum</strong></a>(self, x, fieldname, schema, maximum<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;field&nbsp;is&nbsp;shorter&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;maximum<br>
+length&nbsp;if&nbsp;specified.</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_minItems"><strong>validate_minItems</strong></a>(self, x, fieldname, schema, minitems<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;in&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;equal&nbsp;to&nbsp;or<br>
-more&nbsp;than&nbsp;the&nbsp;minimum&nbsp;amount</tt></dd></dl>
+more&nbsp;than&nbsp;the&nbsp;minimum&nbsp;amount.</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_minLength"><strong>validate_minLength</strong></a>(self, x, fieldname, schema, length<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;longer&nbsp;than&nbsp;or&nbsp;equal&nbsp;to<br>
-the&nbsp;specified&nbsp;length&nbsp;if&nbsp;a&nbsp;string</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_minLength"><strong>validate_minLength</strong></a>(self, x, fieldname, schema, length<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;longer&nbsp;than&nbsp;or&nbsp;equal<br>
+to&nbsp;the&nbsp;specified&nbsp;length&nbsp;if&nbsp;a&nbsp;string</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_minimum"><strong>validate_minimum</strong></a>(self, x, fieldname, schema, minimum<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;field&nbsp;is&nbsp;longer&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;minimum&nbsp;length&nbsp;if<br>
-specified</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_minimum"><strong>validate_minimum</strong></a>(self, x, fieldname, schema, minimum<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;field&nbsp;is&nbsp;longer&nbsp;than&nbsp;or&nbsp;equal&nbsp;to&nbsp;the&nbsp;minimum<br>
+length&nbsp;if&nbsp;specified</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_optional"><strong>validate_optional</strong></a>(self, x, fieldname, schema, optional<font color="#909090">=False</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;present&nbsp;if&nbsp;optional&nbsp;is&nbsp;false</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_options"><strong>validate_options</strong></a>(self, x, fieldname, schema, options<font color="#909090">=None</font>)</dt></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_pattern"><strong>validate_pattern</strong></a>(self, x, fieldname, schema, pattern<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;given&nbsp;field,&nbsp;if&nbsp;a&nbsp;string,&nbsp;matches&nbsp;the&nbsp;given&nbsp;regular<br>
-expression.</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_pattern"><strong>validate_pattern</strong></a>(self, x, fieldname, schema, pattern<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;given&nbsp;field,&nbsp;if&nbsp;a&nbsp;string,&nbsp;matches&nbsp;the&nbsp;given<br>
+regular&nbsp;expression.</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_properties"><strong>validate_properties</strong></a>(self, x, fieldname, schema, properties<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;properties&nbsp;of&nbsp;a&nbsp;JSON&nbsp;object&nbsp;by&nbsp;processing&nbsp;the&nbsp;object's&nbsp;schema<br>
-recursively</tt></dd></dl>
+<dl><dt><a name="JSONSchemaValidator-validate_properties"><strong>validate_properties</strong></a>(self, x, fieldname, schema, properties<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;properties&nbsp;of&nbsp;a&nbsp;JSON&nbsp;object&nbsp;by&nbsp;processing&nbsp;the&nbsp;object's<br>
+schema&nbsp;recursively</tt></dd></dl>
 
 <dl><dt><a name="JSONSchemaValidator-validate_readonly"><strong>validate_readonly</strong></a>(self, x, fieldname, schema, readonly<font color="#909090">=False</font>)</dt></dl>
 
@@ -158,8 +171,6 @@ recursively</tt></dd></dl>
 <dl><dt><a name="JSONSchemaValidator-validate_type"><strong>validate_type</strong></a>(self, x, fieldname, schema, fieldtype<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;fieldtype&nbsp;specified&nbsp;is&nbsp;correct&nbsp;for&nbsp;the&nbsp;given<br>
 data</tt></dd></dl>
 
-<dl><dt><a name="JSONSchemaValidator-validate_unique"><strong>validate_unique</strong></a>(self, x, fieldname, schema, unique<font color="#909090">=False</font>)</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;given&nbsp;field&nbsp;is&nbsp;unique&nbsp;in&nbsp;the&nbsp;instance&nbsp;object&nbsp;tree</tt></dd></dl>
-
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
@@ -167,7 +178,22 @@ data</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-validate"><strong>validate</strong></a>(data, schema, validator_cls<font color="#909090">=None</font>)</dt><dd><tt>Validates&nbsp;a&nbsp;parsed&nbsp;json&nbsp;document&nbsp;against&nbsp;the&nbsp;provided&nbsp;schema</tt></dd></dl>
+<td width="100%"><dl><dt><a name="-validate"><strong>validate</strong></a>(data, schema, validator_cls<font color="#909090">=None</font>, interactive_mode<font color="#909090">=True</font>)</dt><dd><tt>Validates&nbsp;a&nbsp;parsed&nbsp;json&nbsp;document&nbsp;against&nbsp;the&nbsp;provided&nbsp;schema.&nbsp;If&nbsp;an<br>
+error&nbsp;is&nbsp;found&nbsp;a&nbsp;ValueError&nbsp;is&nbsp;raised.<br>
+&nbsp;<br>
+``data``&nbsp;is&nbsp;a&nbsp;python&nbsp;dictionary&nbsp;object&nbsp;of&nbsp;parsed&nbsp;json&nbsp;data.<br>
+&nbsp;<br>
+``schema``&nbsp;is&nbsp;a&nbsp;python&nbsp;dictionary&nbsp;object&nbsp;of&nbsp;the&nbsp;parsed&nbsp;json&nbsp;schema.<br>
+&nbsp;<br>
+If&nbsp;``validator_cls``&nbsp;is&nbsp;provided&nbsp;that&nbsp;class&nbsp;will&nbsp;be&nbsp;used&nbsp;to&nbsp;validate<br>
+the&nbsp;given&nbsp;``schema``&nbsp;against&nbsp;the&nbsp;given&nbsp;``data``.&nbsp;The&nbsp;given&nbsp;class&nbsp;should<br>
+be&nbsp;a&nbsp;subclass&nbsp;of&nbsp;the&nbsp;<a href="#JSONSchemaValidator">JSONSchemaValidator</a>&nbsp;class.<br>
+&nbsp;<br>
+``interactive_mode``&nbsp;is&nbsp;a&nbsp;boolean&nbsp;value&nbsp;specifying&nbsp;if&nbsp;the&nbsp;data&nbsp;should<br>
+be&nbsp;validated&nbsp;in&nbsp;interactive&nbsp;mode.&nbsp;Validating&nbsp;in&nbsp;interactive&nbsp;mode&nbsp;will<br>
+allow&nbsp;the&nbsp;validator&nbsp;to&nbsp;make&nbsp;changes&nbsp;to&nbsp;the&nbsp;given&nbsp;json&nbsp;``data``&nbsp;object<br>
+to&nbsp;put&nbsp;in&nbsp;place&nbsp;default&nbsp;values&nbsp;specified&nbsp;in&nbsp;the&nbsp;given&nbsp;``schema``<br>
+object.</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
