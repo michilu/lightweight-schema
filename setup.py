@@ -21,7 +21,7 @@ if sys.version < '2.3':
 
 from setuptools import setup, find_packages
 
-VERSION = "0.1a"
+VERSION = "0.2a"
 DESCRIPTION = "json-schema validator for Python"
 LONG_DESCRIPTION = """
 jsonschema is a complete, full featured validator for json-schema
