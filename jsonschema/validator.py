@@ -423,14 +423,14 @@ class JSONSchemaValidator:
       # produce a copy of sub items on the next recursive call.
       
       #TODO: Get rid of this
-      new_schema = copy.copy(schema)
+      # new_schema = copy.copy(schema)
       
-      #Initialize defaults
+      # #Initialize defaults
+      # for schemaprop in self._schemadefault.keys():
+      #   if schemaprop not in new_schema:
+      #     new_schema[schemaprop] = self._schemadefault[schemaprop]
+      
       for schemaprop in self._schemadefault.keys():
-        if schemaprop not in new_schema:
-          new_schema[schemaprop] = self._schemadefault[schemaprop]
-      
-      for schemaprop in new_schema:
         
         validatorname = "validate_"+schemaprop
         
@@ -438,7 +438,7 @@ class JSONSchemaValidator:
           validator = getattr(self, validatorname)
           # Pass the original schema object but the value of the property from
           # copy in order to validate default values.
-          validator(data, fieldname, schema, new_schema.get(schemaprop))
+          validator(data, fieldname, schema, schema.get(schemaprop))
         except AttributeError, e:
           raise ValueError("Schema property '%s' is not supported" % schemaprop)
       
