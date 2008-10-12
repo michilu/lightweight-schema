@@ -422,7 +422,9 @@ class JSONSchemaValidator:
       # it to process default values. Deep copy is not necessary since we will
       # produce a copy of sub items on the next recursive call.
       
+      #TODO: Get rid of this
       new_schema = copy.copy(schema)
+      
       #Initialize defaults
       for schemaprop in self._schemadefault.keys():
         if schemaprop not in new_schema:
